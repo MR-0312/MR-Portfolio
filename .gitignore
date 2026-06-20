@@ -2,3 +2,8 @@ node_modules
 dist
 .DS_Store
 *.log
+
+# Claude Design handoff artifacts — not part of the portfolio
+README.md
+chats/
+project/
