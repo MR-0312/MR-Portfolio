@@ -1,4 +1,5 @@
-import './style.css';
+// style.css is loaded via a <link> in index.html (no bundler in production),
+// so it is intentionally not imported here.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';

@@ -13,6 +13,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Stylesheet linked directly so the site is fully styled even when served as
+     raw source (no Vite build step on the host). -->
+<link rel="stylesheet" href="/src/style.css">
+<!-- Import map lets the unbundled ES modules in /src resolve their bare imports
+     (gsap, lenis, three) natively in the browser — no build required. -->
+<script type="importmap">
+{
+  "imports": {
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+    "lenis": "https://esm.sh/lenis@1.1.18",
+    "three": "https://esm.sh/three@0.169.0"
+  }
+}
+</script>
 </head>
 <body>
 
