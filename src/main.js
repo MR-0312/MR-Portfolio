@@ -6,7 +6,9 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 const root = document.documentElement;
-const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Animations always play — the OS "reduce motion" gate is intentionally disabled
+// so the site animates regardless of the visitor's accessibility setting.
+const reduce = false;
 const EASE = 'power3.out';
 
 const PHRASES = [
