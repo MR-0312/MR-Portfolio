@@ -2,6 +2,7 @@ import './style.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { initScene3D } from './scene3d.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -77,6 +78,10 @@ function boot() {
   setupProjects();
   setupActiveNav();
   setupHeroScroll();
+
+  // 3D robot mascot in the hero card
+  const stage = document.querySelector('[data-scene3d]');
+  if (stage) { try { initScene3D(stage); } catch (e) { console.warn('3D scene failed', e); } }
 
   // Headings split into lines — run after fonts load so line breaks measure
   // correctly, but cap the wait so a slow/blocked font request can never delay
@@ -318,10 +323,6 @@ function setupActiveNav() {
 function setupHeroScroll() {
   const hero = document.querySelector('.hero');
   if (!hero) return;
-  gsap.to('.hero-img', {
-    scale: 1.12, ease: 'none',
-    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-  });
   gsap.to('[data-parallax]', {
     yPercent: -8, ease: 'none',
     scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
