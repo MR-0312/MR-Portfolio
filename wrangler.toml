@@ -1,6 +1,14 @@
 name = "mr-portfolio"
 compatibility_date = "2026-06-20"
 
+# Run the Vite production build before every deploy so the served files are the
+# bundled output, never the raw source. `wrangler deploy` runs this command,
+# generates dist/, then uploads it — so the Git-connected Workers build (whose
+# deploy command is `npx wrangler deploy`) always ships a built site rather than
+# the unbundled index.html + /src/main.js.
+[build]
+command = "npm run build"
+
 # Static-assets-only Worker: serve the Vite build output (dist/) directly.
 # An explicit [assets] block stops wrangler from trying to auto-configure the
 # Cloudflare Vite plugin (which would require Vite >= 6).
