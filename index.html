@@ -3,592 +3,311 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meet Radadiya — Real-time Voice AI Engineer</title>
+<title>Meet Radadiya — AI / ML Engineer</title>
+<meta name="description" content="Meet Radadiya — AI / ML Engineer. LLM fine-tuning, agentic & RAG systems, computer vision, and real-time voice AI, shipped to production.">
+<meta name="author" content="Meet Radadiya">
+<meta property="og:title" content="Meet Radadiya — AI / ML Engineer">
+<meta property="og:description" content="LLM fine-tuning, agentic & RAG systems, computer vision, and real-time voice AI — shipped to production.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root { --accent: #e0853c; }
-*,*::before,*::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin:0; background:#0d0c0a; font-family:'Hanken Grotesk',system-ui,sans-serif; color:#cfc7b9; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-a { color:inherit; text-decoration:none; }
-::selection { background:rgba(224,133,60,0.28); color:#fff; }
-::-webkit-scrollbar { width:11px; }
-::-webkit-scrollbar-track { background:#0d0c0a; }
-::-webkit-scrollbar-thumb { background:#2b261d; border-radius:6px; }
-
-@keyframes awave  { 0%,100%{transform:scaleY(0.18)} 50%{transform:scaleY(1)} }
-@keyframes ablink { 0%,48%{opacity:1} 49%,100%{opacity:0} }
-@keyframes apulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-@keyframes amarquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-.nav-link {
-  font-size:13.5px; color:#9a9082; padding:7px 13px; border-radius:100px;
-  transition:color .2s,background .2s;
-}
-.nav-link:hover { color:#f3ede1; background:rgba(255,255,255,0.06); }
-
-.pill-btn {
-  font-size:13.5px; font-weight:600; color:#0d0c0a; padding:9px 18px;
-  border-radius:100px; background:var(--accent);
-  transition:filter .2s,transform .2s; display:inline-block;
-}
-.pill-btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
-
-.ghost-btn {
-  padding:13px 22px; border-radius:100px; font-weight:600; font-size:14.5px;
-  color:#ece6da; border:1px solid rgba(255,255,255,0.14);
-  transition:border-color .2s,color .2s;
-}
-.ghost-btn:hover { border-color:var(--accent); color:#fff; }
-
-.project-card {
-  display:flex; flex-direction:column;
-  border:1px solid rgba(255,255,255,0.08); border-radius:20px;
-  background:rgba(255,255,255,0.022); overflow:hidden;
-  transform-style:preserve-3d;
-  transition:border-color .3s;
-  will-change:transform;
-}
-.project-card:hover { border-color:rgba(224,133,60,0.5); }
-.card-img { transition:transform .7s cubic-bezier(0.22,1,0.36,1); }
-.project-card:hover .card-img { transform:scale(1.06); }
-
-.contact-link {
-  color:#bcae9a; transition:color .2s; font-family:'JetBrains Mono',monospace; font-size:13px;
-}
-.contact-link:hover { color:#f3ede1; }
-</style>
 </head>
 <body>
 
-<!-- Scroll progress -->
-<div id="progress-bar" aria-hidden="true" style="position:fixed;top:0;left:0;right:0;height:3px;z-index:60;transform:scaleX(0);transform-origin:left;background:var(--accent);will-change:transform;"></div>
+<!-- scroll progress -->
+<div class="progress" id="progress" aria-hidden="true"></div>
 
-<!-- Ambient glow -->
-<div aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1000px 600px at 82% -6%,rgba(224,133,60,0.12),transparent 60%),radial-gradient(800px 520px at 4% 30%,rgba(224,133,60,0.05),transparent 62%);"></div>
-
-<!-- Grain -->
-<div aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.4;mix-blend-mode:overlay;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.5%22/></svg>');"></div>
+<!-- ambient + grain -->
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
 
 <!-- NAV -->
-<header style="position:sticky;top:0;z-index:50;display:flex;justify-content:center;padding:16px 20px;">
-  <nav style="display:flex;align-items:center;gap:4px;padding:8px 8px 8px 20px;background:rgba(20,17,12,0.66);border:1px solid rgba(255,255,255,0.08);border-radius:100px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);">
-    <a href="#top" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#f3ede1;margin-right:12px;">Meet<span style="color:var(--accent);">.</span></a>
-    <a href="#work"     class="nav-link">Work</a>
-    <a href="#projects" class="nav-link">Projects</a>
-    <a href="#skills"   class="nav-link">Skills</a>
-    <a href="#contact"  class="nav-link">Contact</a>
-    <a href="project/Meet_Radadiya_Resume.pdf" download class="pill-btn">Résumé</a>
+<header class="nav-wrap">
+  <nav class="nav">
+    <a href="#top" class="nav-brand">Meet<span>.</span></a>
+    <div class="nav-links">
+      <a href="#work"     data-nav="work">Work</a>
+      <a href="#projects" data-nav="projects">Projects</a>
+      <a href="#skills"   data-nav="skills">Skills</a>
+      <a href="#contact"  data-nav="contact">Contact</a>
+    </div>
+    <a href="/Meet_Radadiya_Resume.pdf" download class="btn-pill nav-resume">Résumé</a>
   </nav>
 </header>
 
-<!-- HERO -->
-<section id="top" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:54px 28px 46px;display:flex;flex-wrap:wrap;align-items:center;gap:50px;">
-  <div style="flex:1 1 440px;min-width:300px;">
-    <div data-reveal style="display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border:1px solid rgba(255,255,255,0.1);border-radius:100px;background:rgba(255,255,255,0.025);font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:0.04em;color:#b6ac9c;margin-bottom:26px;">
-      <span style="width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:apulse 2.4s ease-in-out infinite;display:inline-block;flex-shrink:0;"></span>
-      AVAILABLE FOR AI / ML ROLES · SURAT, INDIA
-    </div>
-    <h1 data-reveal data-reveal-delay="60" style="font-family:'Bricolage Grotesque',sans-serif;margin:0;font-size:clamp(44px,7vw,84px);line-height:0.98;font-weight:700;letter-spacing:-0.03em;color:#f5efe3;">Meet Radadiya</h1>
-    <div data-reveal data-reveal-delay="120" style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(21px,3.2vw,34px);font-weight:600;letter-spacing:-0.015em;margin-top:10px;color:var(--accent);">Real-time Voice AI Engineer</div>
-    <div data-reveal data-reveal-delay="180" style="font-family:'JetBrains Mono',monospace;font-size:clamp(13px,1.8vw,15px);color:#8a8073;margin-top:18px;">
-      <span style="color:#6b6052;">focus:</span>
-      <span id="typed-el" style="color:#cfc7b9;"></span><span style="color:var(--accent);animation:ablink 1s steps(1) infinite;">▌</span>
-    </div>
-    <p data-reveal data-reveal-delay="240" style="max-width:500px;margin:22px 0 0;font-size:16.5px;line-height:1.7;color:#a59b8c;">I ship production conversational AI — LLM agent orchestration, telephony integration, and STT/TTS pipelines — at Crest Infosystems.</p>
-    <div data-reveal data-reveal-delay="300" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;">
-      <a href="#projects" id="mag-btn" style="padding:13px 26px;border-radius:100px;font-weight:600;font-size:14.5px;color:#0d0c0a;background:var(--accent);display:inline-block;transition:transform .4s cubic-bezier(0.16,1,0.3,1),filter .2s;">View projects →</a>
-      <a href="https://github.com/MR-0312"                    target="_blank" rel="noopener" class="ghost-btn">GitHub ↗</a>
-      <a href="https://www.linkedin.com/in/meet-radadiya"     target="_blank" rel="noopener" class="ghost-btn">LinkedIn ↗</a>
-    </div>
-  </div>
+<main>
 
-  <!-- Hero image -->
-  <div style="flex:0 1 380px;min-width:270px;position:relative;">
-    <div data-parallax data-speed="0.06" style="position:relative;">
-      <div aria-hidden="true" style="position:absolute;inset:-20px;border-radius:28px;background:var(--accent);opacity:0.18;filter:blur(34px);"></div>
-      <div style="position:relative;border:1px solid rgba(255,255,255,0.1);border-radius:22px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,0.8);">
-        <img id="hero-scale-img"
-             src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=900&q=78&auto=format&fit=crop"
-             alt="Studio microphone" loading="lazy"
-             style="display:block;width:100%;height:460px;object-fit:cover;filter:grayscale(1) contrast(1.06) brightness(0.92);transform-origin:center center;" />
-        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(150deg,rgba(224,133,60,0.4),rgba(120,60,24,0.12) 45%,transparent);mix-blend-mode:multiply;"></div>
-        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(13,12,10,0.88));"></div>
-        <div style="position:absolute;left:18px;right:18px;bottom:18px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.06em;color:#cdbfa9;margin-bottom:9px;">
-            <span>VOICE PIPELINE · STT → LLM → TTS</span>
-            <span style="color:var(--accent);">● LIVE</span>
-          </div>
-          <div id="wave-bars" style="display:flex;align-items:flex-end;gap:3px;height:34px;"></div>
-        </div>
+<!-- HERO -->
+<section id="top" class="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow" data-reveal>
+        <span class="dot"></span> AVAILABLE FOR AI / ML ROLES — SURAT, INDIA
       </div>
-      <div style="position:absolute;top:-14px;right:-14px;padding:9px 15px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(20,17,12,0.92);backdrop-filter:blur(10px);font-size:12px;color:#ece6da;font-weight:600;">AWS Certified ML</div>
+      <h1 class="hero-title" data-split>Meet Radadiya</h1>
+      <div class="hero-role" data-reveal data-reveal-delay="0.05">AI / ML Engineer</div>
+      <div class="hero-focus mono" data-reveal data-reveal-delay="0.12">
+        <span class="faint">focus:</span>
+        <span data-typed></span><span class="caret">▌</span>
+      </div>
+      <p class="hero-lead" data-reveal data-reveal-delay="0.18">
+        I design, train, and ship production AI end-to-end — from LLM fine-tuning and
+        agentic RAG to computer vision and real-time voice — currently at Crest Infosystems.
+      </p>
+      <div class="hero-cta" data-reveal data-reveal-delay="0.24">
+        <a href="#projects" class="btn-pill" data-magnetic>View work →</a>
+        <a href="https://github.com/MR-0312" target="_blank" rel="noopener" class="btn-ghost">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/meet-radadiya" target="_blank" rel="noopener" class="btn-ghost">LinkedIn ↗</a>
+      </div>
+    </div>
+
+    <div class="hero-media" data-reveal data-reveal-delay="0.1">
+      <div class="hero-card" data-parallax data-speed="0.05">
+        <div class="hero-card-glow" aria-hidden="true"></div>
+        <div class="hero-card-frame">
+          <div class="hero-3d" data-scene3d aria-hidden="true"></div>
+          <div class="hero-img-fade" aria-hidden="true"></div>
+          <div class="hero-hint mono" aria-hidden="true">drag cursor · click me</div>
+          <div class="hero-card-meta">
+            <div class="hero-card-row mono">
+              <span>INFERENCE · STT → LLM → TTS</span>
+              <span class="accent">● LIVE</span>
+            </div>
+            <div class="wave" data-wave aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="hero-badge">AWS Certified ML</div>
+      </div>
     </div>
   </div>
+  <a href="#ticker" class="scroll-cue" aria-hidden="true"><span></span></a>
 </section>
 
-<!-- MARQUEE -->
-<div id="marquee-track" aria-hidden="true" style="position:relative;z-index:2;margin:26px 0 6px;padding:16px 0;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);">
-  <div id="marquee-inner" style="display:flex;width:max-content;animation:amarquee 34s linear infinite;"></div>
+<!-- TICKER -->
+<div id="ticker" class="ticker" data-marquee aria-hidden="true">
+  <div class="ticker-track" data-marquee-track></div>
 </div>
 
 <!-- STATS -->
-<section style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:50px 28px;">
-  <div id="stats-grid" data-stagger="80" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;"></div>
+<section class="stats">
+  <div class="wrap stats-grid" data-stagger="0.08">
+    <div class="stat" data-reveal>
+      <div class="stat-num"><span data-count data-target="4" data-suffix="">0</span></div>
+      <div class="stat-label">Production AI pipelines shipped</div>
+    </div>
+    <div class="stat" data-reveal>
+      <div class="stat-num"><span data-count data-target="97" data-suffix="%">0%</span></div>
+      <div class="stat-label">Best Macro F1 · Kaggle 1st place</div>
+    </div>
+    <div class="stat" data-reveal>
+      <div class="stat-num"><span data-count data-target="70" data-suffix="%">0%</span></div>
+      <div class="stat-label">Faster medical reporting</div>
+    </div>
+    <div class="stat" data-reveal>
+      <div class="stat-num"><span data-count data-target="300" data-suffix="+">0+</span></div>
+      <div class="stat-label">Students mentored &amp; led</div>
+    </div>
+  </div>
 </section>
 
 <!-- EXPERIENCE -->
-<section id="work" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:56px 28px;">
-  <div data-reveal="blur" style="margin-bottom:40px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:var(--accent);">01 — EXPERIENCE</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;margin:10px 0 0;font-size:clamp(30px,4.5vw,46px);font-weight:700;letter-spacing:-0.025em;color:#f3ede1;">Where I've shipped</h2>
+<section id="work" class="section wrap">
+  <div class="section-head">
+    <div class="section-index mono">01 — EXPERIENCE</div>
+    <h2 class="section-title" data-split>Where I've shipped</h2>
   </div>
-  <div style="position:relative;padding-left:28px;">
-    <div aria-hidden="true" style="position:absolute;left:4px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--accent),rgba(224,133,60,0.15),transparent);"></div>
 
-    <!-- Crest Infosystems -->
-    <div data-reveal style="position:relative;margin-bottom:18px;">
-      <span aria-hidden="true" style="position:absolute;left:-28px;top:30px;width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(224,133,60,0.16);display:block;"></span>
-      <div style="border:1px solid rgba(255,255,255,0.08);border-radius:20px;background:rgba(255,255,255,0.022);padding:28px 28px 26px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;">
+  <div class="timeline">
+    <div class="timeline-line" aria-hidden="true"></div>
+
+    <div class="tl-item" data-reveal>
+      <span class="tl-dot tl-dot--accent" aria-hidden="true"></span>
+      <div class="card tl-card">
+        <div class="tl-top">
           <div>
-            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:600;color:#f3ede1;">Crest Infosystems Pvt. Ltd.</div>
-            <div style="font-size:14px;color:var(--accent);margin-top:3px;font-weight:500;">Software Engineer L1 · ML Engineer</div>
+            <div class="tl-org">Crest Infosystems Pvt. Ltd.</div>
+            <div class="tl-role accent">Software Engineer L1 · ML Engineer</div>
           </div>
-          <div style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a8073;">Jul 2025 — Present<br>Surat, Gujarat</div>
+          <div class="tl-when mono">Jul 2025 — Present<br>Surat, Gujarat</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:12px;margin-top:22px;">
-          <div style="padding:16px 18px;border:1px solid rgba(255,255,255,0.06);border-radius:13px;background:rgba(224,133,60,0.05);"><div style="font-weight:600;color:#ece6da;font-size:14.5px;font-family:'Bricolage Grotesque',sans-serif;">AI Voice IVR</div><div style="font-size:13px;color:#a59b8c;line-height:1.6;margin-top:6px;">Twilio SIP + ElevenLabs + LiveKit — real-time call flows over WebRTC.</div></div>
-          <div style="padding:16px 18px;border:1px solid rgba(255,255,255,0.06);border-radius:13px;background:rgba(224,133,60,0.05);"><div style="font-weight:600;color:#ece6da;font-size:14.5px;font-family:'Bricolage Grotesque',sans-serif;">Voice RAG Chatbot</div><div style="font-size:13px;color:#a59b8c;line-height:1.6;margin-top:6px;">Groq Whisper → LLM agent → XTTS cloned voice in under 3s (DeepSpeed).</div></div>
-          <div style="padding:16px 18px;border:1px solid rgba(255,255,255,0.06);border-radius:13px;background:rgba(224,133,60,0.05);"><div style="font-weight:600;color:#ece6da;font-size:14.5px;font-family:'Bricolage Grotesque',sans-serif;">AI Conference App</div><div style="font-size:13px;color:#a59b8c;line-height:1.6;margin-top:6px;">LiveKit + Deepgram + Supabase + Groq for live transcription &amp; summaries.</div></div>
-          <div style="padding:16px 18px;border:1px solid rgba(255,255,255,0.06);border-radius:13px;background:rgba(224,133,60,0.05);"><div style="font-weight:600;color:#ece6da;font-size:14.5px;font-family:'Bricolage Grotesque',sans-serif;">Video LipSync</div><div style="font-size:13px;color:#a59b8c;line-height:1.6;margin-top:6px;">Faster Whisper + Chatterbox TTS + SoulX-Flashead lip-sync; on AWS.</div></div>
+        <div class="tl-grid">
+          <div class="mini"><div class="mini-t">AI Voice IVR</div><div class="mini-d">Twilio SIP + ElevenLabs + LiveKit — real-time call flows over WebRTC.</div></div>
+          <div class="mini"><div class="mini-t">Voice RAG Chatbot</div><div class="mini-d">Groq Whisper → LLM agent → XTTS cloned voice in under 3s (DeepSpeed).</div></div>
+          <div class="mini"><div class="mini-t">AI Conference App</div><div class="mini-d">LiveKit + Deepgram + Supabase + Groq for live transcription &amp; summaries.</div></div>
+          <div class="mini"><div class="mini-t">Video LipSync</div><div class="mini-d">Faster Whisper + Chatterbox TTS + SoulX-Flashead lip-sync; on AWS.</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Avinashi Group -->
-    <div data-reveal style="position:relative;">
-      <span aria-hidden="true" style="position:absolute;left:-28px;top:30px;width:11px;height:11px;border-radius:50%;background:#8a8073;box-shadow:0 0 0 4px rgba(138,128,115,0.14);display:block;"></span>
-      <div style="border:1px solid rgba(255,255,255,0.08);border-radius:20px;background:rgba(255,255,255,0.022);padding:28px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;">
+    <div class="tl-item" data-reveal>
+      <span class="tl-dot" aria-hidden="true"></span>
+      <div class="card tl-card">
+        <div class="tl-top">
           <div>
-            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:600;color:#f3ede1;">Avinashi Group of Companies</div>
-            <div style="font-size:14px;color:var(--accent);margin-top:3px;font-weight:500;">AI Research Intern</div>
+            <div class="tl-org">Avinashi Group of Companies</div>
+            <div class="tl-role accent">AI Research Intern</div>
           </div>
-          <div style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a8073;">May — Jun 2024<br>Surat, Gujarat</div>
+          <div class="tl-when mono">May — Jun 2024<br>Surat, Gujarat</div>
         </div>
-        <ul style="margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px;">
-          <li style="display:flex;gap:11px;font-size:14.5px;line-height:1.65;color:#a59b8c;"><span style="color:var(--accent);flex-shrink:0;">▹</span><span>Fine-tuned Llama &amp; Mistral with LoRA/QLoRA via HF Transformers — <span style="color:#ece6da;">+30% accuracy</span>, <span style="color:#ece6da;">−40% processing time</span>.</span></li>
-          <li style="display:flex;gap:11px;font-size:14.5px;line-height:1.65;color:#a59b8c;"><span style="color:var(--accent);flex-shrink:0;">▹</span><span>Built preprocessing pipelines with custom tokenization, boosting accuracy by 15%.</span></li>
+        <ul class="tl-list">
+          <li><span class="accent">▹</span><span>Fine-tuned Llama &amp; Mistral with LoRA/QLoRA via HF Transformers — <em>+30% accuracy</em>, <em>−40% processing time</em>.</span></li>
+          <li><span class="accent">▹</span><span>Built preprocessing pipelines with custom tokenization, boosting accuracy by 15%.</span></li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:56px 28px;">
-  <div data-reveal="blur" style="margin-bottom:40px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:var(--accent);">02 — PROJECTS</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;margin:10px 0 0;font-size:clamp(30px,4.5vw,46px);font-weight:700;letter-spacing:-0.025em;color:#f3ede1;">Things I've built</h2>
+<!-- PROJECTS (pinned showcase) -->
+<section id="projects" class="projects">
+  <div class="wrap section-head">
+    <div class="section-index mono">02 — PROJECTS</div>
+    <h2 class="section-title" data-split>Things I've built</h2>
   </div>
-  <div id="projects-grid" data-stagger="110" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px;"></div>
+
+  <div class="projects-pin wrap" data-projects>
+    <!-- sticky media -->
+    <div class="proj-media">
+      <div class="proj-media-stack" data-proj-media>
+        <div class="proj-shot is-active" data-shot="0"><img src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1000&q=78&auto=format&fit=crop" alt="MediSight" loading="lazy"><div class="proj-shot-wash"></div></div>
+        <div class="proj-shot" data-shot="1"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1000&q=78&auto=format&fit=crop" alt="DermaScan AI" loading="lazy"><div class="proj-shot-wash"></div></div>
+        <div class="proj-shot" data-shot="2"><img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1000&q=78&auto=format&fit=crop" alt="Digital Twin" loading="lazy"><div class="proj-shot-wash"></div></div>
+        <div class="proj-shot" data-shot="3"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1000&q=78&auto=format&fit=crop" alt="ImmunoQuest" loading="lazy"><div class="proj-shot-wash"></div></div>
+        <div class="proj-media-index mono"><span data-proj-current>01</span> / 04</div>
+      </div>
+    </div>
+
+    <!-- scrolling panels -->
+    <div class="proj-panels">
+      <article class="proj-panel" data-panel="0">
+        <div class="proj-tag mono accent">live demo ↗</div>
+        <h3 class="proj-name">MediSight</h3>
+        <div class="proj-sub">Multimodal Medical Report Generator</div>
+        <p class="proj-desc">Fine-tuned Llama 3 (Unsloth + LoRA) for multimodal medical imaging — structured clinical PDF reports across 8 diagnostic sections from X-ray / MRI / CT. Deployed as a live Hugging Face Space; −70% report time.</p>
+        <div class="proj-tags"><span>Llama 3</span><span>Unsloth</span><span>LoRA</span><span>Groq</span></div>
+        <a class="proj-link" href="https://huggingface.co/spaces/Ed-Stark/MediSight" target="_blank" rel="noopener" data-magnetic>Open live demo ↗</a>
+      </article>
+
+      <article class="proj-panel" data-panel="1">
+        <div class="proj-tag mono accent">live demo ↗</div>
+        <h3 class="proj-name">DermaScan AI</h3>
+        <div class="proj-sub">Skin Disease Classifier</div>
+        <p class="proj-desc">Multi-class skin cancer &amp; disease classifier — fine-tuned CNNs on dermoscopy datasets across 10+ conditions. Live Hugging Face Space accessible to healthcare users.</p>
+        <div class="proj-tags"><span>PyTorch</span><span>ResNet</span><span>Transfer Learning</span></div>
+        <a class="proj-link" href="https://huggingface.co/spaces/Ed-Stark/DermaScan-AI" target="_blank" rel="noopener" data-magnetic>Open live demo ↗</a>
+      </article>
+
+      <article class="proj-panel" data-panel="2">
+        <div class="proj-tag mono">case study</div>
+        <h3 class="proj-name">Digital Twin</h3>
+        <div class="proj-sub">Manufacturing Optimization</div>
+        <p class="proj-desc">Real-time equipment monitoring with predictive-maintenance ML — anomaly detection &amp; alerting cut downtime 35% and saved ₹15L annually.</p>
+        <div class="proj-tags"><span>Computer Vision</span><span>Predictive ML</span><span>Python</span></div>
+      </article>
+
+      <article class="proj-panel" data-panel="3">
+        <div class="proj-tag mono accent">★ 1st place</div>
+        <h3 class="proj-name">ImmunoQuest</h3>
+        <div class="proj-sub">WBC Classifier · Kaggle 1st</div>
+        <p class="proj-desc">Won 1st among 50+ teams — classified white blood cells into 5 classes with a fine-tuned ResNet50, hitting 97% Macro F1 via transfer learning and augmentation.</p>
+        <div class="proj-tags"><span>PyTorch</span><span>ResNet50</span><span>Transfer Learning</span></div>
+      </article>
+    </div>
+  </div>
 </section>
 
 <!-- SKILLS -->
-<section id="skills" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:56px 28px;">
-  <div data-reveal="blur" style="margin-bottom:40px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:var(--accent);">03 — STACK</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;margin:10px 0 0;font-size:clamp(30px,4.5vw,46px);font-weight:700;letter-spacing:-0.025em;color:#f3ede1;">Technical skills</h2>
+<section id="skills" class="section wrap">
+  <div class="section-head">
+    <div class="section-index mono">03 — STACK</div>
+    <h2 class="section-title" data-split>Technical skills</h2>
   </div>
-  <div id="skills-grid" data-stagger="70" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;"></div>
+  <div class="skills-grid" data-stagger="0.06">
+    <div class="card skill" data-reveal>
+      <div class="skill-name">LLM &amp; Agentic Systems</div>
+      <div class="chips"><span>LangChain</span><span>LlamaIndex</span><span>Groq</span><span>OpenAI API</span><span>Agentic RAG</span><span>Prompt Engineering</span></div>
+    </div>
+    <div class="card skill" data-reveal>
+      <div class="skill-name">Model Training &amp; Fine-tuning</div>
+      <div class="chips"><span>PyTorch</span><span>HF Transformers</span><span>Unsloth</span><span>LoRA/QLoRA</span><span>DeepSpeed</span></div>
+    </div>
+    <div class="card skill" data-reveal>
+      <div class="skill-name">NLP &amp; ML</div>
+      <div class="chips"><span>Transformers</span><span>BPE Tokenization</span><span>Embeddings</span><span>FAISS</span><span>ChromaDB</span><span>Scikit-learn</span></div>
+    </div>
+    <div class="card skill" data-reveal>
+      <div class="skill-name">Voice AI &amp; Telephony</div>
+      <div class="chips"><span>LiveKit</span><span>Twilio SIP</span><span>ElevenLabs</span><span>Deepgram</span><span>Faster Whisper</span><span>Groq Whisper</span><span>XTTS</span><span>WebRTC</span></div>
+    </div>
+    <div class="card skill" data-reveal>
+      <div class="skill-name">Languages &amp; Backend</div>
+      <div class="chips"><span>Python</span><span>FastAPI</span><span>REST APIs</span><span>WebSockets</span><span>SQL</span></div>
+    </div>
+    <div class="card skill" data-reveal>
+      <div class="skill-name">Cloud &amp; MLOps</div>
+      <div class="chips"><span>AWS</span><span>Supabase</span><span>Docker</span><span>Git &amp; GitHub</span><span>HF Spaces</span></div>
+    </div>
+  </div>
 </section>
 
 <!-- CREDENTIALS -->
-<section id="credentials" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:56px 28px;">
-  <div data-reveal="blur" style="margin-bottom:40px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:var(--accent);">04 — CREDENTIALS</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;margin:10px 0 0;font-size:clamp(30px,4.5vw,46px);font-weight:700;letter-spacing:-0.025em;color:#f3ede1;">Education &amp; recognition</h2>
+<section id="credentials" class="section wrap">
+  <div class="section-head">
+    <div class="section-index mono">04 — CREDENTIALS</div>
+    <h2 class="section-title" data-split>Education &amp; recognition</h2>
   </div>
-  <div data-stagger="130" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;align-items:start;">
-    <div data-reveal style="border:1px solid rgba(255,255,255,0.08);border-radius:18px;background:rgba(255,255,255,0.022);padding:24px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#8a8073;margin-bottom:12px;">// EDUCATION</div>
-      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:600;color:#f3ede1;">Charotar University (CHARUSAT)</div>
-      <div style="font-size:13.5px;color:var(--accent);margin-top:4px;">B.Tech — AI &amp; Machine Learning</div>
-      <div style="font-size:13px;color:#8a8073;margin-top:9px;">CGPA 8.91 / 10 · May 2026 · Anand, Gujarat</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#8a8073;margin:24px 0 12px;">// LEADERSHIP</div>
-      <div style="display:flex;flex-direction:column;gap:13px;">
-        <div><div style="font-size:14px;font-weight:600;color:#ece6da;">Vice Chair · IEEE Computer Society</div><div style="font-size:12.5px;color:#8a8073;margin-top:3px;line-height:1.6;">Led 8+ workshops for 300+ students; +25% membership.</div></div>
-        <div><div style="font-size:14px;font-weight:600;color:#ece6da;">Project Lead · AI/ML Club</div><div style="font-size:12.5px;color:#8a8073;margin-top:3px;line-height:1.6;">Directed 4 AI teams, mentored 15+ students; +30% membership.</div></div>
+  <div class="cred-grid" data-stagger="0.1">
+    <div class="card cred" data-reveal>
+      <div class="cred-kicker mono">// EDUCATION</div>
+      <div class="cred-h">Charotar University (CHARUSAT)</div>
+      <div class="cred-sub accent">B.Tech — AI &amp; Machine Learning</div>
+      <div class="cred-meta">CGPA 8.91 / 10 · May 2026 · Anand, Gujarat</div>
+      <div class="cred-kicker mono" style="margin-top:24px">// LEADERSHIP</div>
+      <div class="cred-lead">
+        <div><div class="cred-lead-t">Vice Chair · IEEE Computer Society</div><div class="cred-lead-d">Led 8+ workshops for 300+ students; +25% membership.</div></div>
+        <div><div class="cred-lead-t">Project Lead · AI/ML Club</div><div class="cred-lead-d">Directed 4 AI teams, mentored 15+ students; +30% membership.</div></div>
       </div>
     </div>
-    <div data-reveal style="border:1px solid rgba(255,255,255,0.08);border-radius:18px;background:rgba(255,255,255,0.022);padding:24px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#8a8073;margin-bottom:14px;">// CERTIFICATIONS</div>
-      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;">
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>AWS Certified ML Engineer — Associate <span style="color:#6b6052;">· 2026</span></span></li>
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>AWS Certified AI Practitioner <span style="color:#6b6052;">· 2026</span></span></li>
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>AWS Academy — Cloud Developing <span style="color:#6b6052;">· 2025</span></span></li>
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>NVIDIA — Generative AI &amp; Diffusion Models</span></li>
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>NVIDIA — Video AI at the Edge (Jetson Nano)</span></li>
-        <li style="display:flex;gap:10px;font-size:13.5px;color:#c5bcab;line-height:1.5;"><span style="color:var(--accent);flex-shrink:0;">✓</span><span>NPTEL — Deep Learning for NLP · Intro to ML</span></li>
+    <div class="card cred" data-reveal>
+      <div class="cred-kicker mono">// CERTIFICATIONS</div>
+      <ul class="cred-list">
+        <li><span class="accent">✓</span><span>AWS Certified ML Engineer — Associate <span class="faint">· 2026</span></span></li>
+        <li><span class="accent">✓</span><span>AWS Certified AI Practitioner <span class="faint">· 2026</span></span></li>
+        <li><span class="accent">✓</span><span>AWS Academy — Cloud Developing <span class="faint">· 2025</span></span></li>
+        <li><span class="accent">✓</span><span>NVIDIA — Generative AI &amp; Diffusion Models</span></li>
+        <li><span class="accent">✓</span><span>NVIDIA — Video AI at the Edge (Jetson Nano)</span></li>
+        <li><span class="accent">✓</span><span>NPTEL — Deep Learning for NLP · Intro to ML</span></li>
       </ul>
-      <div style="margin-top:20px;padding:15px 17px;border-radius:13px;background:rgba(224,133,60,0.09);border:1px solid rgba(224,133,60,0.22);font-size:13px;color:#e3d3bc;line-height:1.55;"><span style="font-weight:700;color:var(--accent);">★ Kaggle 1st Place (2025)</span> — ImmunoQuest, best WBC model among 50+ teams.</div>
+      <div class="cred-badge"><span class="accent">★ Kaggle 1st Place (2025)</span> — ImmunoQuest, best WBC model among 50+ teams.</div>
     </div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact" style="position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:56px 28px 50px;">
-  <div data-reveal style="position:relative;border:1px solid rgba(255,255,255,0.09);border-radius:26px;overflow:hidden;">
-    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1400&q=72&auto=format&fit=crop" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(0.5);" />
-    <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(140deg,rgba(224,133,60,0.34),rgba(13,12,10,0.7) 45%,rgba(13,12,10,0.92));"></div>
-    <div style="position:relative;padding:60px 40px;text-align:center;">
-      <h2 style="font-family:'Bricolage Grotesque',sans-serif;margin:0;font-size:clamp(32px,5.5vw,60px);font-weight:700;letter-spacing:-0.03em;color:#f7f1e6;">Let's build something.</h2>
-      <p style="font-size:16px;color:#c5bcab;margin:18px auto 32px;max-width:520px;line-height:1.7;">Open to AI / ML engineering roles — especially real-time Voice AI, LLM systems, and applied ML.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
-        <a href="mailto:meetradadiya0@gmail.com" class="pill-btn">meetradadiya0@gmail.com</a>
-        <a href="project/Meet_Radadiya_Resume.pdf" download style="padding:13px 24px;border-radius:100px;font-weight:600;font-size:14.5px;color:#ece6da;border:1px solid rgba(255,255,255,0.18);background:rgba(13,12,10,0.4);transition:border-color .2s,color .2s,background .2s;">Résumé ↓</a>
+<section id="contact" class="section wrap">
+  <div class="contact card" data-reveal>
+    <img class="contact-bg" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&q=72&auto=format&fit=crop" alt="" loading="lazy">
+    <div class="contact-wash" aria-hidden="true"></div>
+    <div class="contact-inner">
+      <h2 class="contact-title" data-split>Let's build something.</h2>
+      <p class="contact-lead">Open to AI / ML engineering roles — LLM systems, applied ML, computer vision, and real-time voice.</p>
+      <div class="contact-cta">
+        <a href="mailto:meetradadiya0@gmail.com" class="btn-pill" data-magnetic>meetradadiya0@gmail.com</a>
+        <a href="/Meet_Radadiya_Resume.pdf" download class="btn-ghost btn-ghost--solid">Résumé ↓</a>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:22px;justify-content:center;margin-top:26px;">
-        <a href="tel:+919979178330"                              class="contact-link">+91 99791 78330</a>
-        <a href="https://github.com/MR-0312"                    target="_blank" rel="noopener" class="contact-link">GitHub ↗</a>
-        <a href="https://www.linkedin.com/in/meet-radadiya"     target="_blank" rel="noopener" class="contact-link">LinkedIn ↗</a>
+      <div class="contact-links mono">
+        <a href="tel:+919979178330">+91 99791 78330</a>
+        <a href="https://github.com/MR-0312" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/meet-radadiya" target="_blank" rel="noopener">LinkedIn ↗</a>
       </div>
     </div>
   </div>
-  <footer style="text-align:center;margin-top:32px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#5c5345;">© 2026 Meet Radadiya</footer>
+  <footer class="footer mono">© 2026 Meet Radadiya — built with care.</footer>
 </section>
 
-<script>
-// ── Data ──────────────────────────────────────────────────────────────────
-const PHRASES = ['real-time Voice AI','LLM agent orchestration','telephony × WebRTC','sub-3s Voice RAG'];
+</main>
 
-const STATS = [
-  { num:4,   suffix:'',  label:'Voice / ML systems in prod' },
-  { num:97,  suffix:'%', label:'Best Macro F1' },
-  { num:70,  suffix:'%', label:'Faster medical reports' },
-  { num:300, suffix:'+', label:'Students mentored' }
-];
-
-const MARQUEE_ITEMS = ['Python','FastAPI','LiveKit','Twilio','ElevenLabs','Deepgram','Whisper','XTTS','LangChain','Groq','PyTorch','Unsloth','LoRA','DeepSpeed','AWS','WebRTC','Agentic RAG','FAISS'];
-
-const PROJECTS = [
-  { num:'01', title:'MediSight',   subtitle:'Multimodal Medical Report Generator',
-    img:'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=900&q=75&auto=format&fit=crop',
-    desc:'Fine-tuned Llama 3 (Unsloth + LoRA) for multimodal medical imaging — structured clinical PDF reports across 8 sections from X-ray / MRI / CT. Live HF Space, −70% report time.',
-    tags:['Llama 3','Unsloth','LoRA','Groq'], tag:'live demo ↗', href:'https://huggingface.co/spaces/Ed-Stark/MediSight' },
-  { num:'02', title:'DermaScan AI', subtitle:'Skin Disease Classifier',
-    img:'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=75&auto=format&fit=crop',
-    desc:'Multi-class skin cancer & disease classifier — fine-tuned CNNs on dermoscopy datasets across 10+ conditions. Live HF Space for healthcare users.',
-    tags:['PyTorch','ResNet','Transfer Learning'], tag:'live demo ↗', href:'https://huggingface.co/spaces/Ed-Stark/DermaScan-AI' },
-  { num:'03', title:'Digital Twin', subtitle:'Manufacturing Optimization',
-    img:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=900&q=75&auto=format&fit=crop',
-    desc:'Real-time equipment monitoring with predictive-maintenance ML — anomaly detection cut downtime 35% and saved ₹15L annually.',
-    tags:['Computer Vision','Predictive ML','Python'], tag:'case study', href:'#' },
-  { num:'04', title:'ImmunoQuest', subtitle:'WBC Classifier',
-    img:'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=75&auto=format&fit=crop',
-    desc:'Won 1st among 50+ teams — classified white blood cells into 5 classes with fine-tuned ResNet50, hitting 97% Macro F1 via transfer learning.',
-    tags:['PyTorch','ResNet50','Transfer Learning'], tag:'★ 1st place', href:'#' }
-];
-
-const SKILL_GROUPS = [
-  { name:'Languages & Backend',     items:['Python','FastAPI','REST APIs','WebSockets','SQL'] },
-  { name:'Voice AI & Telephony',    items:['LiveKit','Twilio SIP','ElevenLabs','Deepgram','Faster Whisper','Groq Whisper','XTTS','Chatterbox TTS','WebRTC'] },
-  { name:'LLM & Agentic Systems',   items:['LangChain','LlamaIndex','Groq','OpenAI API','Agentic RAG','Prompt Engineering'] },
-  { name:'Training & Fine-tuning',  items:['PyTorch','HF Transformers','Unsloth','LoRA/QLoRA','DeepSpeed'] },
-  { name:'NLP & ML',                items:['Transformers','BPE Tokenization','Embeddings','FAISS','ChromaDB','Scikit-learn'] },
-  { name:'Cloud & MLOps',           items:['AWS','Supabase','Docker','Git & GitHub','HF Spaces'] }
-];
-
-// ── Wave bars ─────────────────────────────────────────────────────────────
-(function() {
-  const c = document.getElementById('wave-bars');
-  for (let i = 0; i < 52; i++) {
-    const dur   = (0.85 + ((i*7) % 9) * 0.13).toFixed(2);
-    const delay = ((i*0.06) % 1.6).toFixed(2);
-    const bar = document.createElement('span');
-    bar.style.cssText = 'display:block;flex:1 1 0;min-width:0;height:100%;border-radius:2px;' +
-      'transform-origin:bottom;background:var(--accent);opacity:0.85;' +
-      'animation:awave '+dur+'s ease-in-out -'+delay+'s infinite;';
-    c.appendChild(bar);
-  }
-})();
-
-// ── Marquee ───────────────────────────────────────────────────────────────
-(function() {
-  const inner = document.getElementById('marquee-inner');
-  function makeSet() {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;gap:40px;padding-right:40px;';
-    MARQUEE_ITEMS.forEach(m => {
-      const s = document.createElement('span');
-      s.style.cssText = "font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:600;" +
-        'color:#5c5345;white-space:nowrap;display:inline-flex;align-items:center;gap:40px;';
-      s.innerHTML = m + '<span style="color:var(--accent)">✦</span>';
-      wrap.appendChild(s);
-    });
-    return wrap;
-  }
-  inner.appendChild(makeSet());
-  inner.appendChild(makeSet());
-})();
-
-// ── Stats ─────────────────────────────────────────────────────────────────
-(function() {
-  const grid = document.getElementById('stats-grid');
-  STATS.forEach(s => {
-    const card = document.createElement('div');
-    card.setAttribute('data-reveal', '');
-    card.style.cssText = 'border:1px solid rgba(255,255,255,0.08);border-radius:18px;background:rgba(255,255,255,0.022);padding:26px 24px;';
-    card.innerHTML = '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:clamp(36px,5vw,50px);font-weight:700;letter-spacing:-0.03em;color:var(--accent);">' +
-      '<span class="count-num" data-target="'+s.num+'" data-suffix="'+s.suffix+'">0'+s.suffix+'</span></div>' +
-      '<div style="font-size:13.5px;color:#8a8073;margin-top:6px;">'+s.label+'</div>';
-    grid.appendChild(card);
-  });
-})();
-
-// ── Projects ──────────────────────────────────────────────────────────────
-(function() {
-  const grid = document.getElementById('projects-grid');
-  PROJECTS.forEach(p => {
-    const a = document.createElement('a');
-    a.href = p.href;
-    if (p.href !== '#') { a.target = '_blank'; a.rel = 'noopener'; }
-    a.className = 'project-card';
-    a.setAttribute('data-reveal', '');
-    a.setAttribute('data-tilt', '');
-    a.innerHTML =
-      '<div style="position:relative;height:194px;overflow:hidden;">' +
-        '<img src="'+p.img+'" alt="'+p.title+'" loading="lazy" class="card-img" style="display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05) brightness(0.86);" />' +
-        '<div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(150deg,rgba(224,133,60,0.42),rgba(120,60,24,0.1) 50%,transparent);mix-blend-mode:multiply;"></div>' +
-        '<div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(13,12,10,0.82));"></div>' +
-        '<div style="position:absolute;top:12px;left:12px;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#cdbfa9;">'+p.num+'</div>' +
-        '<div style="position:absolute;top:12px;right:12px;font-size:11px;padding:5px 11px;border-radius:100px;background:rgba(13,12,10,0.7);border:1px solid rgba(255,255,255,0.14);color:var(--accent);backdrop-filter:blur(6px);">'+p.tag+'</div>' +
-        '<div style="position:absolute;left:18px;bottom:14px;">' +
-          '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:21px;font-weight:700;color:#f7f1e6;">'+p.title+'</div>' +
-          '<div style="font-size:12.5px;color:#cdbfa9;margin-top:2px;">'+p.subtitle+'</div>' +
-        '</div>' +
-      '</div>' +
-      '<div style="padding:22px 22px 24px;display:flex;flex-direction:column;flex:1;">' +
-        '<p style="font-size:13.5px;line-height:1.65;color:#a59b8c;margin:0 0 16px;flex:1;">'+p.desc+'</p>' +
-        '<div style="display:flex;flex-wrap:wrap;gap:6px;">'+
-          p.tags.map(t => '<span style="font-size:11px;padding:4px 9px;background:rgba(224,133,60,0.09);border:1px solid rgba(224,133,60,0.2);color:#dcb487;border-radius:100px;">'+t+'</span>').join('')+
-        '</div>' +
-      '</div>';
-    grid.appendChild(a);
-  });
-})();
-
-// ── Skills ────────────────────────────────────────────────────────────────
-(function() {
-  const grid = document.getElementById('skills-grid');
-  SKILL_GROUPS.forEach(g => {
-    const card = document.createElement('div');
-    card.setAttribute('data-reveal', 'scale');
-    card.style.cssText = 'border:1px solid rgba(255,255,255,0.08);border-radius:18px;background:rgba(255,255,255,0.022);padding:22px;';
-    card.innerHTML =
-      '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:14.5px;font-weight:600;color:#ece6da;margin-bottom:14px;">'+g.name+'</div>' +
-      '<div style="display:flex;flex-wrap:wrap;gap:7px;">'+
-        g.items.map(it => '<span style="font-size:12px;padding:5px 11px;background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.08);color:#a59b8c;border-radius:100px;">'+it+'</span>').join('')+
-      '</div>';
-    grid.appendChild(card);
-  });
-})();
-
-// ── Motion engine ─────────────────────────────────────────────────────────
-(function() {
-  const SP = 'cubic-bezier(0.16,1,0.3,1)';
-
-  function fromState(kind) {
-    switch(kind) {
-      case 'blur':  return { tf:'translate3d(0,21px,0)', fl:'blur(14px)' };
-      case 'scale': return { tf:'translate3d(0,18px,0) scale(0.93)', fl:'' };
-      case 'left':  return { tf:'translate3d(30px,0,0)', fl:'' };
-      case 'right': return { tf:'translate3d(-30px,0,0)', fl:'' };
-      case 'down':  return { tf:'translate3d(0,-30px,0)', fl:'' };
-      default:      return { tf:'translate3d(0,30px,0)', fl:'' };
-    }
-  }
-
-  // Collect all reveal targets (dynamic content already in DOM)
-  const allReveal = Array.from(document.querySelectorAll('[data-reveal]'));
-
-  // Apply stagger delays
-  document.querySelectorAll('[data-stagger]').forEach(container => {
-    const step = parseInt(container.getAttribute('data-stagger') || '90', 10);
-    Array.from(container.querySelectorAll('[data-reveal]')).forEach((el, i) => {
-      if (!el.hasAttribute('data-reveal-delay')) {
-        el.setAttribute('data-reveal-delay', String(i * step));
-      }
-    });
-  });
-
-  // Set initial hidden state
-  allReveal.forEach(el => {
-    const kind = el.getAttribute('data-reveal') || 'up';
-    const { tf, fl } = fromState(kind);
-    el.style.opacity = '0';
-    el.style.transform = tf;
-    if (fl) el.style.filter = fl;
-  });
-
-  let queue = allReveal.slice();
-
-  function revealEl(el) {
-    const dur   = parseInt(el.getAttribute('data-reveal-dur')   || '820', 10);
-    const delay = parseInt(el.getAttribute('data-reveal-delay') || '0',   10);
-    el.style.transition = `opacity ${dur}ms ease ${delay}ms, transform ${dur}ms ${SP} ${delay}ms, filter ${dur}ms ease ${delay}ms`;
-    requestAnimationFrame(() => {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-      el.style.filter = 'none';
-    });
-    // After reveal, restore tilt-ready transition
-    if (el.hasAttribute('data-tilt')) {
-      setTimeout(() => {
-        el.style.transition = '';
-      }, dur + delay + 100);
-    }
-  }
-
-  function checkReveals() {
-    if (!queue.length) return;
-    const trigger = window.innerHeight * 0.9;
-    queue = queue.filter(el => {
-      if (el.getBoundingClientRect().top < trigger) { revealEl(el); return false; }
-      return true;
-    });
-  }
-
-  // Scroll state
-  const progressBar  = document.getElementById('progress-bar');
-  const heroImg      = document.getElementById('hero-scale-img');
-  const marqueeTrack = document.getElementById('marquee-track');
-  const parallaxEls  = Array.from(document.querySelectorAll('[data-parallax]'));
-  let lastY = window.scrollY, skew = 0, skewTarget = 0;
-
-  function onScroll() {
-    const docEl = document.documentElement;
-    const max = docEl.scrollHeight - docEl.clientHeight;
-    const y   = window.scrollY;
-
-    // Progress bar
-    progressBar.style.transform = 'scaleX(' + (max > 0 ? y/max : 0).toFixed(4) + ')';
-
-    const vh = window.innerHeight;
-
-    // Parallax
-    parallaxEls.forEach(el => {
-      const speed = parseFloat(el.getAttribute('data-speed') || '0.1');
-      const r = el.getBoundingClientRect();
-      el.style.transform = 'translate3d(0,' + (-(r.top + r.height/2 - vh/2) * speed).toFixed(1) + 'px,0)';
-    });
-
-    // Ken-Burns scroll-scale on hero image
-    if (heroImg) {
-      const off = Math.max(0, -heroImg.getBoundingClientRect().top);
-      heroImg.style.transform = 'scale(' + (1 + Math.min(0.14, off/(vh*4))).toFixed(3) + ')';
-    }
-
-    // Marquee skew via scroll velocity
-    const dv = y - lastY;
-    lastY = y;
-    skewTarget = Math.max(-4, Math.min(4, dv * 0.16));
-  }
-
-  // RAF loop: marquee skew smoothing + continuous reveal check
-  function loop() {
-    skew += (skewTarget - skew) * 0.12;
-    skewTarget *= 0.86;
-    if (Math.abs(skew) < 0.01) skew = 0;
-    if (marqueeTrack) marqueeTrack.style.transform = 'skewX(' + skew.toFixed(3) + 'deg)';
-    checkReveals();
-    requestAnimationFrame(loop);
-  }
-
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', onScroll, { passive:true });
-  checkReveals();
-  onScroll();
-  requestAnimationFrame(loop);
-
-  // Safety: force-show everything after 3.5s
-  setTimeout(() => {
-    queue.forEach(el => {
-      el.style.transition = 'none';
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-      el.style.filter = 'none';
-    });
-    queue = [];
-  }, 3500);
-
-  // Magnetic CTA
-  const mag = document.getElementById('mag-btn');
-  if (mag) {
-    mag.addEventListener('pointermove', e => {
-      const r = mag.getBoundingClientRect();
-      mag.style.transform = 'translate(' +
-        ((e.clientX - r.left - r.width/2)  * 0.3).toFixed(1) + 'px,' +
-        ((e.clientY - r.top  - r.height/2) * 0.45).toFixed(1) + 'px)';
-    });
-    mag.addEventListener('pointerleave', () => { mag.style.transform = 'translate(0,0)'; });
-  }
-
-  // 3D tilt on project cards
-  function setupTilt(el) {
-    el.addEventListener('pointermove', e => {
-      const r  = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width  - 0.5;
-      const py = (e.clientY - r.top)  / r.height - 0.5;
-      el.style.transform = 'perspective(900px) rotateY(' + (px*6).toFixed(2) + 'deg) rotateX(' + (-py*6).toFixed(2) + 'deg) translateY(-5px)';
-    });
-    el.addEventListener('pointerleave', () => {
-      el.style.transform = 'perspective(900px) rotateY(0deg) rotateX(0deg) translateY(0px)';
-    });
-  }
-  document.querySelectorAll('[data-tilt]').forEach(setupTilt);
-})();
-
-// ── Typing effect ─────────────────────────────────────────────────────────
-(function() {
-  const el = document.getElementById('typed-el');
-  if (!el) return;
-  let pi = 0, ci = 0, del = false, hold = 6;
-  setInterval(() => {
-    if (hold > 0) { hold--; return; }
-    const full = PHRASES[pi];
-    if (!del) { ci++; if (ci >= full.length) { ci = full.length; del = true; hold = 30; } }
-    else       { ci--; if (ci <= 0) { ci = 0; del = false; pi = (pi+1) % PHRASES.length; hold = 5; } }
-    el.textContent = full.slice(0, ci);
-  }, 60);
-})();
-
-// ── Count-up stats ────────────────────────────────────────────────────────
-(function() {
-  const grid = document.getElementById('stats-grid');
-  if (!grid) return;
-  let done = false;
-  const io = new IntersectionObserver(entries => {
-    if (done || !entries[0].isIntersecting) return;
-    done = true;
-    io.disconnect();
-    const els = document.querySelectorAll('.count-num');
-    const t0 = performance.now(), dur = 1500;
-    function step(now) {
-      const t = Math.min(1, (now - t0) / dur);
-      const e = 1 - Math.pow(1-t, 3);
-      els.forEach(el => {
-        el.textContent = Math.round(parseInt(el.dataset.target,10) * e) + el.dataset.suffix;
-      });
-      if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }, { threshold:0.3 });
-  io.observe(grid);
-})();
-</script>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>
