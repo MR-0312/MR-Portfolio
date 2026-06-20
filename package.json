@@ -1,0 +1,18 @@
+{
+  "name": "meet-radadiya-portfolio",
+  "version": "1.0.0",
+  "description": "Animated portfolio for Meet Radadiya — AI / ML Engineer",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.18"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
