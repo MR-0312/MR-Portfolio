@@ -7,26 +7,23 @@ import { initScene3D } from './scene3d.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const root = document.documentElement;
-// Animations always play — the OS "reduce motion" gate is intentionally disabled
-// so the site animates regardless of the visitor's accessibility setting.
-const reduce = false;
 const EASE = 'power3.out';
 
 const PHRASES = [
-  'LLM fine-tuning & RAG',
-  'agentic AI systems',
-  'computer vision',
   'real-time voice AI',
+  'LLM agent orchestration',
+  'telephony & SIP integration',
+  'LLM fine-tuning',
   'applied ML in production',
 ];
 
-const TICKER = ['Python','PyTorch','LangChain','Unsloth','LoRA','Groq','FastAPI',
-  'Hugging Face','Agentic RAG','FAISS','LiveKit','Deepgram','Whisper','XTTS',
-  'WebRTC','AWS','Docker','Supabase'];
+const TICKER = ['LiveKit', 'Twilio SIP', 'ElevenLabs', 'Deepgram', 'Groq Whisper',
+  'XTTS', 'WebRTC', 'LangChain', 'Agentic RAG', 'PyTorch', 'Unsloth', 'LoRA',
+  'DeepSpeed', 'FastAPI', 'FAISS', 'AWS', 'Supabase', 'Docker'];
 
 /* Mark JS active so the CSS can hide reveal targets. Everything below is
-   wrapped: any failure removes `js` again so content is never stuck hidden,
-   and a hard timeout force-reveals as a final safety net. */
+   wrapped: any failure removes `js` so content is never stuck hidden, and a
+   hard timeout force-reveals as a final safety net. */
 root.classList.add('js');
 
 function forceReveal() {
@@ -35,9 +32,7 @@ function forceReveal() {
     el.style.transform = 'none';
   });
   document.querySelectorAll('[data-split]').forEach((el) => { el.style.opacity = '1'; });
-  document.querySelectorAll('.split-line > span').forEach((s) => {
-    s.style.transform = 'none';
-  });
+  document.querySelectorAll('.split-line > span').forEach((s) => { s.style.transform = 'none'; });
 }
 const safety = setTimeout(forceReveal, 4000);
 
@@ -53,12 +48,6 @@ function boot() {
   buildTicker();
   buildWave();
   startTyping();
-
-  if (reduce) {
-    // Static, accessible final state — no smooth scroll, no motion.
-    setCountsFinal();
-    return;
-  }
 
   // ---- Lenis smooth scroll, wired to GSAP's ticker + ScrollTrigger --------
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
@@ -79,13 +68,12 @@ function boot() {
   setupActiveNav();
   setupHeroScroll();
 
-  // 3D robot mascot in the hero card
+  // 3D centerpiece in the hero card
   const stage = document.querySelector('[data-scene3d]');
   if (stage) { try { initScene3D(stage); } catch (e) { console.warn('3D scene failed', e); } }
 
   // Headings split into lines — run after fonts load so line breaks measure
-  // correctly, but cap the wait so a slow/blocked font request can never delay
-  // the reveals. Reveals + counts are set up in the same pass.
+  // correctly, but cap the wait so a slow/blocked font request can't stall.
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   Promise.race([fontsReady, wait(600)]).then(() => {
     setupSplitHeadings();
@@ -93,14 +81,12 @@ function boot() {
     setupCounts();
     ScrollTrigger.refresh();
   });
-  // Refresh again once everything (images) has settled.
   window.addEventListener('load', () => ScrollTrigger.refresh());
 }
 
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 // Above-the-fold elements are already past their ScrollTrigger start at load,
-// where the trigger won't reliably fire — so play those immediately and only
-// attach a ScrollTrigger to elements still below the fold.
+// where the trigger won't reliably fire — so play those immediately.
 function inView(el) { return el.getBoundingClientRect().top < window.innerHeight * 0.92; }
 
 /* ---------------------------------------------------------------- ticker */
@@ -119,23 +105,21 @@ function buildTicker() {
   };
   track.appendChild(makeSet());
   track.appendChild(makeSet()); // duplicate for a seamless -50% loop
-
-  if (reduce) return;
-  gsap.to(track, { xPercent: -50, duration: 34, ease: 'none', repeat: -1 });
+  gsap.to(track, { xPercent: -50, duration: 38, ease: 'none', repeat: -1 });
 }
 
 /* ------------------------------------------------------------------ wave */
 function buildWave() {
   const wave = document.querySelector('[data-wave]');
   if (!wave) return;
-  for (let i = 0; i < 48; i++) {
-    const dur = (0.85 + ((i * 7) % 9) * 0.13).toFixed(2);
-    const delay = ((i * 0.06) % 1.6).toFixed(2);
+  for (let i = 0; i < 40; i++) {
+    const dur = (0.7 + ((i * 7) % 9) * 0.12).toFixed(2);
+    const delay = ((i * 0.05) % 1.4).toFixed(2);
     const h = (0.2 + ((i * 37) % 80) / 100).toFixed(2);
     const bar = document.createElement('span');
     bar.style.setProperty('--wdur', dur + 's');
     bar.style.setProperty('--wdelay', '-' + delay + 's');
-    bar.style.transform = `scaleY(${h})`; // static baseline (also the reduced-motion look)
+    bar.style.transform = `scaleY(${h})`; // static baseline if CSS anim is blocked
     wave.appendChild(bar);
   }
 }
@@ -144,7 +128,6 @@ function buildWave() {
 function startTyping() {
   const el = document.querySelector('[data-typed]');
   if (!el) return;
-  if (reduce) { el.textContent = PHRASES[0]; return; }
   let pi = 0, ci = 0, del = false, hold = 6;
   setInterval(() => {
     if (hold > 0) { hold--; return; }
@@ -152,7 +135,7 @@ function startTyping() {
     if (!del) { ci++; if (ci >= full.length) { ci = full.length; del = true; hold = 30; } }
     else { ci--; if (ci <= 0) { ci = 0; del = false; pi = (pi + 1) % PHRASES.length; hold = 5; } }
     el.textContent = full.slice(0, ci);
-  }, 60);
+  }, 55);
 }
 
 /* ------------------------------------------------------- split headings */
@@ -160,35 +143,55 @@ function setupSplitHeadings() {
   document.querySelectorAll('[data-split]').forEach((el) => {
     const inners = splitLines(el);
     el.style.opacity = '1'; // parent shown; inner lines stay hidden via gsap's from
-    const to = { yPercent: 0, duration: 0.9, ease: EASE, stagger: 0.12 };
+    const to = { yPercent: 0, duration: 0.95, ease: EASE, stagger: 0.1 };
     if (inView(el)) {
-      gsap.fromTo(inners, { yPercent: 110 }, to);
+      gsap.fromTo(inners, { yPercent: 115 }, to);
     } else {
-      gsap.fromTo(inners, { yPercent: 110 },
+      gsap.fromTo(inners, { yPercent: 115 },
         { ...to, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
     }
   });
 }
 
+// Splits an element's text into visual lines, preserving explicit <br> breaks.
 function splitLines(el) {
-  const words = el.textContent.trim().split(/\s+/);
+  // Tokens: words and explicit line breaks (from <br>).
+  const tokens = [];
+  el.childNodes.forEach((node) => {
+    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      tokens.push({ br: true });
+    } else {
+      (node.textContent || '').split(/\s+/).filter(Boolean)
+        .forEach((w) => tokens.push({ word: w }));
+    }
+  });
+
+  // Lay words out as inline-blocks to measure natural wrap points.
   el.textContent = '';
-  const wordSpans = words.map((w) => {
+  const measured = tokens.map((t) => {
+    if (t.br) { el.appendChild(document.createElement('br')); return t; }
     const s = document.createElement('span');
     s.style.display = 'inline-block';
-    s.textContent = w;
+    s.textContent = t.word;
     el.appendChild(s);
     el.appendChild(document.createTextNode(' '));
-    return s;
+    t.span = s;
+    return t;
   });
-  // group words into visual lines by their vertical offset
+
+  // Group into lines by vertical offset, breaking on explicit <br> too.
   const lines = [];
   let cur = null, lastTop = null;
-  wordSpans.forEach((s) => {
-    const top = s.offsetTop;
-    if (lastTop === null || Math.abs(top - lastTop) > 2) { cur = []; lines.push(cur); lastTop = top; }
-    cur.push(s.textContent);
+  measured.forEach((t) => {
+    if (t.br) { cur = null; lastTop = null; return; }
+    const top = t.span.offsetTop;
+    if (cur === null || (lastTop !== null && Math.abs(top - lastTop) > 2)) {
+      cur = []; lines.push(cur);
+    }
+    cur.push(t.span.textContent);
+    lastTop = top;
   });
+
   el.textContent = '';
   const inners = [];
   lines.forEach((lineWords) => {
@@ -207,7 +210,6 @@ function splitLines(el) {
 function setupReveals() {
   const claimed = new Set();
 
-  // staggered containers
   document.querySelectorAll('[data-stagger]').forEach((container) => {
     const step = parseFloat(container.getAttribute('data-stagger')) || 0.08;
     const kids = Array.from(container.querySelectorAll('[data-reveal]'));
@@ -221,7 +223,6 @@ function setupReveals() {
     }
   });
 
-  // standalone reveals
   document.querySelectorAll('[data-reveal]').forEach((el) => {
     if (claimed.has(el)) return;
     const delay = parseFloat(el.getAttribute('data-reveal-delay')) || 0;
@@ -242,7 +243,7 @@ function setupCounts() {
     const suffix = el.dataset.suffix || '';
     const obj = { v: 0 };
     const to = {
-      v: target, duration: 1.5, ease: 'power2.out',
+      v: target, duration: 1.6, ease: 'power2.out',
       onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; },
     };
     if (inView(el)) {
@@ -250,11 +251,6 @@ function setupCounts() {
     } else {
       gsap.to(obj, { ...to, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
     }
-  });
-}
-function setCountsFinal() {
-  document.querySelectorAll('[data-count]').forEach((el) => {
-    el.textContent = (parseInt(el.dataset.target, 10) || 0) + (el.dataset.suffix || '');
   });
 }
 
@@ -300,8 +296,8 @@ function setupMagnetic() {
     const yTo = gsap.quickTo(el, 'y', { duration: 0.4, ease: EASE });
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      xTo((e.clientX - r.left - r.width / 2) * 0.35);
-      yTo((e.clientY - r.top - r.height / 2) * 0.5);
+      xTo((e.clientX - r.left - r.width / 2) * 0.3);
+      yTo((e.clientY - r.top - r.height / 2) * 0.45);
     });
     el.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
   });
@@ -324,7 +320,7 @@ function setupHeroScroll() {
   const hero = document.querySelector('.hero');
   if (!hero) return;
   gsap.to('[data-parallax]', {
-    yPercent: -8, ease: 'none',
+    yPercent: -10, ease: 'none',
     scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
   });
   gsap.to('.scroll-cue', {
