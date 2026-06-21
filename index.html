@@ -12,12 +12,11 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Stylesheet linked directly so the site is fully styled even when served as
-     raw source (no Vite build step on the host). -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Stylesheet linked directly so the site is styled even when served as raw
+     source (no Vite build step on the host). -->
 <link rel="stylesheet" href="/src/style.css">
-<!-- Import map lets the unbundled ES modules in /src resolve their bare imports
-     (gsap, lenis, three) natively in the browser — no build required. -->
+<!-- Import map: the unbundled /src modules resolve their bare imports natively. -->
 <script type="importmap">
 {
   "imports": {
@@ -31,18 +30,22 @@
 </head>
 <body>
 
-<!-- custom cursor -->
 <div class="cursor" data-cursor aria-hidden="true"></div>
-
-<!-- scroll progress -->
 <div class="progress" id="progress" aria-hidden="true"></div>
 
-<!-- intro overlay -->
-<div class="intro-screen" data-intro aria-hidden="true">
-  <span class="intro-edge intro-edge--l mono">HUMAN-CENTERED AI</span>
-  <span class="intro-edge intro-edge--r mono">SHIPPED TO PRODUCTION</span>
-  <div class="intro-mark"></div>
-  <div class="intro-tag mono">AI Engineer crafting real-time voice &amp; LLM systems — Surat, India · est. 2026</div>
+<!-- PRELOADER -->
+<div class="pre" data-pre aria-hidden="true">
+  <span class="pre-edge pre-edge--l mono">MEET RADADIYA</span>
+  <span class="pre-edge pre-edge--r mono">AI ENGINEER</span>
+  <div class="pre-stack" data-pre-stack>
+    <img src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=420&q=70&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=420&q=70&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=420&q=70&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=420&q=70&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=420&q=70&auto=format&fit=crop" alt="">
+  </div>
+  <div class="pre-tag mono">A production-focused AI engineer crafting real-time voice &amp; LLM systems for global products since 2024.</div>
+  <div class="pre-count mono" data-pre-count>00</div>
 </div>
 
 <!-- NAV -->
@@ -50,10 +53,10 @@
   <nav class="nav wrap">
     <a href="#top" class="nav-brand">MEET RADADIYA<sup>®</sup></a>
     <div class="nav-links mono">
-      <a href="#work"     data-nav="work"><i>○</i>WORK</a>
-      <a href="#projects" data-nav="projects"><i>○</i>PROJECTS</a>
-      <a href="#stack"    data-nav="stack"><i>○</i>STACK</a>
-      <a href="#contact"  data-nav="contact"><i>○</i>START A CONVO</a>
+      <a href="#work"    data-nav="work"><i>○</i>WORK</a>
+      <a href="#about"   data-nav="about"><i>○</i>ABOUT</a>
+      <a href="#awards"  data-nav="awards"><i>○</i>AWARDS</a>
+      <a href="#contact" data-nav="contact"><i>○</i>START A CONVO</a>
     </div>
     <a href="/Meet_Radadiya_Resume.pdf" download class="nav-resume mono" data-magnetic>RÉSUMÉ ↓</a>
   </nav>
@@ -65,41 +68,35 @@
 <section id="top" class="hero section--light">
   <div class="wrap hero-inner">
     <div class="hero-top mono">
-      <span><i class="dot"></i> AVAILABLE FOR AI ENGINEERING ROLES</span>
-      <span class="hero-summary">A production-focused AI engineer building real-time voice agents,
-        agentic RAG, and fine-tuned LLMs for global-scale products since 2024.</span>
+      <span class="hero-top-l"><i class="dot"></i> AVAILABLE FOR AI ENGINEERING ROLES — SURAT, IN</span>
+      <span class="hero-top-r">A production-focused AI engineer building real-time voice agents, agentic RAG, and fine-tuned LLMs — shipped end-to-end.</span>
     </div>
 
-    <h1 class="hero-title" data-split>MEET<br>RADADIYA</h1>
+    <h1 class="hero-title" data-liquid>BUILDING<br>VOICE AI<br>FOR <span class="hero-box" data-hero-box><span class="hero-box-3d" data-scene3d></span></span>REAL TIME</h1>
 
-    <div class="hero-foot">
-      <div class="hero-role">
-        <span class="mono hero-role-k">○ ROLE</span>
-        AI Engineer — <em>Voice&nbsp;AI</em> &amp; <em>LLM&nbsp;systems</em>
-      </div>
-      <div class="hero-focus mono">
-        <span class="faint">[ FOCUS ]</span>
-        <span data-typed></span><span class="caret">_</span>
-      </div>
-      <a href="#projects" class="pill pill--solid" data-magnetic>SELECTED WORK <span>→</span></a>
+    <div class="hero-foot mono">
+      <span class="hero-role"><i>○</i> MEET RADADIYA — AI ENGINEER, <em>VOICE&nbsp;AI</em> &amp; <em>LLM&nbsp;SYSTEMS</em></span>
+      <span class="hero-focus">[ FOCUS: <span data-typed></span><span class="caret">_</span> ]</span>
+      <a href="#work" class="hero-scroll" data-magnetic>SCROLL ↓</a>
     </div>
   </div>
 </section>
 
-<!-- MANIFESTO (dark, floating collage) -->
+<!-- MANIFESTO (dark) -->
 <section class="manifesto section--dark">
   <div class="collage" data-collage aria-hidden="true">
     <img class="c-img" data-depth="0.10" src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
-    <img class="c-img" data-depth="0.18" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
-    <img class="c-img" data-depth="0.06" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
-    <img class="c-img" data-depth="0.14" src="https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
-    <img class="c-img" data-depth="0.22" src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    <img class="c-img" data-depth="0.20" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    <img class="c-img" data-depth="0.07" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    <img class="c-img" data-depth="0.15" src="https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    <img class="c-img" data-depth="0.24" src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    <img class="c-img" data-depth="0.12" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=520&q=70&auto=format&fit=crop" alt="" loading="lazy">
   </div>
   <div class="wrap">
     <p class="manifesto-text" data-split>
       I build AI that <em>listens</em>, <em>reasons</em> &amp; <em>speaks</em> —
-      real-time voice over telephony, sub-3-second RAG, and fine-tuned LLMs,
-      shipped end&#8209;to&#8209;end into production.
+      real-time voice over telephony, <em>sub-3-second</em> RAG, and fine-tuned LLMs that
+      actually ship.
     </p>
   </div>
 </section>
@@ -107,168 +104,153 @@
 <!-- STATS (dark) -->
 <section class="stats section--dark">
   <div class="wrap stats-grid" data-stagger="0.08">
-    <div class="stat" data-reveal>
-      <div class="stat-num"><span data-count data-target="4" data-suffix="">0</span></div>
-      <div class="stat-label mono">PRODUCTION AI PIPELINES</div>
-    </div>
-    <div class="stat" data-reveal>
-      <div class="stat-num"><span data-count data-target="97" data-suffix="%">0%</span></div>
-      <div class="stat-label mono">MACRO F1 · KAGGLE 1ST</div>
-    </div>
-    <div class="stat" data-reveal>
-      <div class="stat-num"><span data-count data-target="70" data-suffix="%">0%</span></div>
-      <div class="stat-label mono">FASTER MEDICAL REPORTING</div>
-    </div>
-    <div class="stat" data-reveal>
-      <div class="stat-num"><span data-count data-target="300" data-suffix="+">0+</span></div>
-      <div class="stat-label mono">STUDENTS MENTORED &amp; LED</div>
-    </div>
+    <div class="stat" data-reveal><div class="stat-num"><span data-count data-target="4" data-suffix="">0</span></div><div class="stat-label mono">PRODUCTION AI PIPELINES</div></div>
+    <div class="stat" data-reveal><div class="stat-num"><span data-count data-target="97" data-suffix="%">0%</span></div><div class="stat-label mono">MACRO F1 · KAGGLE 1ST</div></div>
+    <div class="stat" data-reveal><div class="stat-num"><span data-count data-target="70" data-suffix="%">0%</span></div><div class="stat-label mono">FASTER MEDICAL REPORTING</div></div>
+    <div class="stat" data-reveal><div class="stat-num"><span data-count data-target="300" data-suffix="+">0+</span></div><div class="stat-label mono">STUDENTS MENTORED &amp; LED</div></div>
   </div>
 </section>
 
-<!-- EXPERIENCE (light, statement + list) -->
-<section id="work" class="section section--light">
+<!-- FEATURED WORK (dark, big image cards) -->
+<section id="work" class="featured section--dark">
+  <div class="wrap lead-row">
+    <span class="pill pill--ghost" data-reveal>Featured Work</span>
+    <h2 class="lead-title" data-split>Handcrafted AI for healthcare, industry &amp; the web.</h2>
+  </div>
+
+  <div class="cards">
+    <article class="card" data-reveal>
+      <a class="card-media" href="https://huggingface.co/spaces/Ed-Stark/MediSight" target="_blank" rel="noopener" data-magnetic>
+        <img src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1300&q=78&auto=format&fit=crop" alt="MediSight" loading="lazy">
+        <span class="card-cta mono">LIVE DEMO ↗</span>
+      </a>
+      <div class="card-info">
+        <div class="card-top"><h3 class="card-name">MediSight</h3><span class="card-year mono">2025</span></div>
+        <p class="card-desc">Fine-tuned <em>Llama&nbsp;3</em> (Unsloth + LoRA) for multimodal medical imaging — structured clinical reports across 8 diagnostic sections from X-ray / MRI / CT. −70% report time.</p>
+        <div class="card-tags mono"><span>LLAMA 3</span><span>UNSLOTH</span><span>LORA</span><span>GROQ</span></div>
+      </div>
+    </article>
+
+    <article class="card card--alt" data-reveal>
+      <a class="card-media" href="https://huggingface.co/spaces/Ed-Stark/DermaScan-AI" target="_blank" rel="noopener" data-magnetic>
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1300&q=78&auto=format&fit=crop" alt="DermaScan AI" loading="lazy">
+        <span class="card-cta mono">LIVE DEMO ↗</span>
+      </a>
+      <div class="card-info">
+        <div class="card-top"><h3 class="card-name">DermaScan AI</h3><span class="card-year mono">2024</span></div>
+        <p class="card-desc">Multi-class skin cancer &amp; disease classifier — fine-tuned CNNs on dermoscopy datasets across <em>10+ conditions</em>, deployed live for healthcare users.</p>
+        <div class="card-tags mono"><span>PYTORCH</span><span>RESNET</span><span>TRANSFER LEARNING</span></div>
+      </div>
+    </article>
+
+    <article class="card" data-reveal>
+      <div class="card-media card-media--static">
+        <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1300&q=78&auto=format&fit=crop" alt="Digital Twin" loading="lazy">
+      </div>
+      <div class="card-info">
+        <div class="card-top"><h3 class="card-name">Digital Twin</h3><span class="card-year mono">2024</span></div>
+        <p class="card-desc">Real-time equipment monitoring with <em>predictive-maintenance ML</em> — anomaly detection &amp; alerting cut downtime 35% and saved ₹15L annually.</p>
+        <div class="card-tags mono"><span>COMPUTER VISION</span><span>PREDICTIVE ML</span><span>PYTHON</span></div>
+      </div>
+    </article>
+
+    <article class="card card--alt" data-reveal>
+      <div class="card-media card-media--static">
+        <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1300&q=78&auto=format&fit=crop" alt="ImmunoQuest" loading="lazy">
+        <span class="card-badge mono">★ KAGGLE 1ST</span>
+      </div>
+      <div class="card-info">
+        <div class="card-top"><h3 class="card-name">ImmunoQuest</h3><span class="card-year mono">2025</span></div>
+        <p class="card-desc">Won <em>1st among 50+ teams</em> — classified white blood cells into 5 classes with a fine-tuned ResNet50, hitting 97% Macro F1 via transfer learning.</p>
+        <div class="card-tags mono"><span>RESNET50</span><span>KAGGLE</span><span>TRANSFER LEARNING</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- WORKS INDEX (alternating rows = experience) -->
+<section class="index">
+  <div class="wrap index-head mono"><span>EXPERIENCE</span><span>INDEX / 02</span></div>
+  <div class="rowlist" data-rows>
+    <article class="irow" data-row>
+      <div class="wrap irow-inner">
+        <div class="irow-name">Crest Infosystems</div>
+        <div class="irow-year mono">2025 — NOW</div>
+        <div class="irow-role">Software Engineer L1 · ML Engineer</div>
+        <div class="irow-tags mono"><span>VOICE AI</span><span>LIVEKIT</span><span>TWILIO SIP</span><span>RAG</span></div>
+      </div>
+    </article>
+    <article class="irow" data-row>
+      <div class="wrap irow-inner">
+        <div class="irow-name">Avinashi Group</div>
+        <div class="irow-year mono">2024</div>
+        <div class="irow-role">AI Research Intern</div>
+        <div class="irow-tags mono"><span>LLAMA</span><span>LORA/QLORA</span><span>PEFT</span><span>NLP</span></div>
+      </div>
+    </article>
+    <article class="irow" data-row>
+      <div class="wrap irow-inner">
+        <div class="irow-name">IEEE CS · AI/ML Club</div>
+        <div class="irow-year mono">2024 — 25</div>
+        <div class="irow-role">Vice Chair · Project Lead — 300+ mentored</div>
+        <div class="irow-tags mono"><span>LEADERSHIP</span><span>WORKSHOPS</span><span>GENAI</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ABOUT (light → service columns) -->
+<section id="about" class="about section--light">
   <div class="wrap">
-    <div class="lead-row">
-      <span class="pill" data-reveal>Experience</span>
-      <h2 class="lead-title" data-split>Where I've shipped real, used-in-production AI.</h2>
-    </div>
+    <h2 class="about-mega" data-liquid>HUMAN-CENTERED<br>AI <em>MAKER</em></h2>
+    <p class="about-lead" data-split>
+      I push the limits of <em>applied AI</em> — constantly exploring real-time voice,
+      agentic systems and model fine-tuning to craft <em>fast, reliable, production-grade</em>
+      experiences that actually ship.
+    </p>
 
-    <div class="rowlist" data-stagger="0.05">
-      <article class="row" data-reveal>
-        <div class="row-name">Crest Infosystems</div>
-        <div class="row-meta mono">2025 — NOW</div>
-        <div class="row-desc">Software Engineer L1 · ML Engineer — built an AI Voice IVR (Twilio&nbsp;SIP + ElevenLabs + LiveKit), a sub-3s agentic Voice RAG with XTTS cloned voice, an AI conference app (LiveKit + Deepgram + Groq), and a video lip-sync pipeline on AWS.</div>
-        <div class="row-tags mono"><span>VOICE AI</span><span>LIVEKIT</span><span>TWILIO SIP</span><span>RAG</span></div>
-      </article>
-      <article class="row" data-reveal>
-        <div class="row-name">Avinashi Group</div>
-        <div class="row-meta mono">2024</div>
-        <div class="row-desc">AI Research Intern — fine-tuned Llama &amp; Mistral with LoRA/QLoRA via HF Transformers (+30% accuracy, −40% processing time) and built custom-tokenization data pipelines that lifted accuracy 15%.</div>
-        <div class="row-tags mono"><span>LLAMA</span><span>LORA/QLORA</span><span>PEFT</span><span>NLP</span></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS (dark, works table + sticky media) -->
-<section id="projects" class="projects section--dark">
-  <div class="wrap">
-    <div class="lead-row">
-      <span class="pill pill--ghost" data-reveal>Selected Work</span>
-      <h2 class="lead-title" data-split>Handcrafted AI for healthcare, industry &amp; the web.</h2>
-    </div>
-  </div>
-
-  <div class="projects-pin wrap" data-projects>
-    <div class="proj-media">
-      <div class="proj-media-stack" data-proj-media>
-        <div class="proj-shot is-active" data-shot="0"><img src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1000&q=78&auto=format&fit=crop" alt="MediSight" loading="lazy"></div>
-        <div class="proj-shot" data-shot="1"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1000&q=78&auto=format&fit=crop" alt="DermaScan AI" loading="lazy"></div>
-        <div class="proj-shot" data-shot="2"><img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1000&q=78&auto=format&fit=crop" alt="Digital Twin" loading="lazy"></div>
-        <div class="proj-shot" data-shot="3"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1000&q=78&auto=format&fit=crop" alt="ImmunoQuest" loading="lazy"></div>
-        <div class="proj-media-index mono"><span data-proj-current>01</span> / 04</div>
+    <div class="about-grid">
+      <div class="about-portrait" data-reveal>
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=900&q=78&auto=format&fit=crop" alt="" loading="lazy">
+        <a href="#contact" class="about-cta mono" data-magnetic>What should we build today? →</a>
       </div>
-    </div>
-
-    <div class="proj-rows">
-      <article class="proj-row" data-panel="0">
-        <div class="proj-row-top">
-          <h3 class="proj-name">MediSight</h3>
-          <span class="proj-year mono">2025</span>
+      <div class="about-cols" data-stagger="0.05">
+        <div class="about-col" data-reveal>
+          <div class="about-col-h mono">○ VOICE AI &amp; TELEPHONY</div>
+          <ul><li>LiveKit</li><li>Twilio SIP Trunking</li><li>ElevenLabs · Deepgram</li><li>Faster / Groq Whisper</li><li>XTTS · Chatterbox TTS</li><li>WebRTC</li></ul>
         </div>
-        <p class="proj-desc">Fine-tuned <em>Llama&nbsp;3</em> (Unsloth + LoRA) for multimodal medical imaging — structured clinical PDF reports across 8 diagnostic sections from X-ray / MRI / CT. Live on Hugging Face; −70% report time.</p>
-        <div class="proj-tags mono"><span>LLAMA 3</span><span>UNSLOTH</span><span>LORA</span><span>GROQ</span></div>
-        <a class="proj-link mono" href="https://huggingface.co/spaces/Ed-Stark/MediSight" target="_blank" rel="noopener" data-magnetic>LIVE DEMO ↗</a>
-      </article>
-      <article class="proj-row" data-panel="1">
-        <div class="proj-row-top">
-          <h3 class="proj-name">DermaScan AI</h3>
-          <span class="proj-year mono">2024</span>
+        <div class="about-col" data-reveal>
+          <div class="about-col-h mono">○ LLM &amp; AGENTIC</div>
+          <ul><li>LangChain · LlamaIndex</li><li>Groq · OpenAI API</li><li>Agentic RAG</li><li>Prompt Engineering</li><li>FAISS · ChromaDB</li></ul>
         </div>
-        <p class="proj-desc">Multi-class skin cancer &amp; disease classifier — fine-tuned CNNs on dermoscopy datasets across 10+ conditions, deployed as a live Hugging Face Space for healthcare users.</p>
-        <div class="proj-tags mono"><span>PYTORCH</span><span>RESNET</span><span>TRANSFER LEARNING</span></div>
-        <a class="proj-link mono" href="https://huggingface.co/spaces/Ed-Stark/DermaScan-AI" target="_blank" rel="noopener" data-magnetic>LIVE DEMO ↗</a>
-      </article>
-      <article class="proj-row" data-panel="2">
-        <div class="proj-row-top">
-          <h3 class="proj-name">Digital Twin</h3>
-          <span class="proj-year mono">2024</span>
+        <div class="about-col" data-reveal>
+          <div class="about-col-h mono">○ TRAINING &amp; NLP</div>
+          <ul><li>PyTorch</li><li>HF Transformers</li><li>Unsloth · LoRA/QLoRA</li><li>DeepSpeed</li><li>Transformers · Tokenization</li></ul>
         </div>
-        <p class="proj-desc">Real-time equipment monitoring with <em>predictive-maintenance ML</em> — anomaly detection &amp; alerting cut downtime 35% and saved ₹15L annually.</p>
-        <div class="proj-tags mono"><span>COMPUTER VISION</span><span>PREDICTIVE ML</span><span>PYTHON</span></div>
-      </article>
-      <article class="proj-row" data-panel="3">
-        <div class="proj-row-top">
-          <h3 class="proj-name">ImmunoQuest</h3>
-          <span class="proj-year mono">2025 · ★ 1ST</span>
+        <div class="about-col" data-reveal>
+          <div class="about-col-h mono">○ BACKEND &amp; CLOUD</div>
+          <ul><li>Python · FastAPI</li><li>REST · WebSockets · SQL</li><li>AWS <i>(Certified ML Eng.)</i></li><li>Supabase · Docker</li><li>Git · HF Spaces</li></ul>
         </div>
-        <p class="proj-desc">Won <em>1st among 50+ teams</em> — classified white blood cells into 5 classes with a fine-tuned ResNet50, hitting 97% Macro F1 via transfer learning &amp; augmentation.</p>
-        <div class="proj-tags mono"><span>RESNET50</span><span>KAGGLE</span><span>TRANSFER LEARNING</span></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- STACK (light, split columns) -->
-<section id="stack" class="section section--light">
-  <div class="wrap stack-grid">
-    <div class="stack-left">
-      <span class="pill" data-reveal>Capabilities</span>
-      <p class="stack-statement" data-split>A forward-deployed engineer comfortable across the whole AI stack — from <em>telephony</em> to <em>training</em>.</p>
-      <div class="stack-3d" data-scene3d aria-hidden="true"></div>
-    </div>
-    <div class="stack-cols" data-stagger="0.05">
-      <div class="stack-col" data-reveal>
-        <div class="stack-col-h mono">○ VOICE AI &amp; TELEPHONY</div>
-        <ul><li>LiveKit</li><li>Twilio SIP Trunking</li><li>ElevenLabs</li><li>Deepgram</li><li>Faster / Groq Whisper</li><li>XTTS · Chatterbox TTS</li><li>WebRTC</li></ul>
-      </div>
-      <div class="stack-col" data-reveal>
-        <div class="stack-col-h mono">○ LLM &amp; AGENTIC</div>
-        <ul><li>LangChain</li><li>LlamaIndex</li><li>Groq</li><li>OpenAI API</li><li>Agentic RAG</li><li>Prompt Engineering</li></ul>
-      </div>
-      <div class="stack-col" data-reveal>
-        <div class="stack-col-h mono">○ TRAINING &amp; NLP</div>
-        <ul><li>PyTorch</li><li>HF Transformers</li><li>Unsloth</li><li>LoRA/QLoRA (PEFT)</li><li>DeepSpeed</li><li>FAISS · ChromaDB</li></ul>
-      </div>
-      <div class="stack-col" data-reveal>
-        <div class="stack-col-h mono">○ BACKEND &amp; CLOUD</div>
-        <ul><li>Python · FastAPI</li><li>REST · WebSockets · SQL</li><li>AWS <i>(Certified ML Engineer)</i></li><li>Supabase · Docker</li><li>Git · Hugging Face Spaces</li></ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- RECOGNITION (light) -->
-<section id="credentials" class="section section--light recog">
-  <div class="wrap">
-    <div class="lead-row">
-      <span class="pill" data-reveal>Awards &amp; Recognition</span>
-      <h2 class="lead-title" data-split>To stand out, you break away from the ordinary.</h2>
-    </div>
-    <div class="recog-grid" data-stagger="0.06">
-      <div class="recog-block" data-reveal>
-        <div class="recog-k mono">○ EDUCATION</div>
-        <div class="recog-h">Charotar University (CHARUSAT)</div>
-        <div class="recog-d">B.Tech — AI &amp; Machine Learning · <em>CGPA 8.91 / 10</em> · May 2026 · Anand, Gujarat</div>
-      </div>
-      <div class="recog-block" data-reveal>
-        <div class="recog-k mono">○ HONORS</div>
-        <div class="recog-h">Kaggle 1st Place — 2025</div>
-        <div class="recog-d">ImmunoQuest WBC classifier, best model among 50+ teams. Vice Chair, IEEE Computer Society; Project Lead, AI/ML Club — 300+ students mentored.</div>
-      </div>
-      <div class="recog-block recog-block--wide" data-reveal>
-        <div class="recog-k mono">○ CERTIFICATIONS</div>
-        <div class="recog-certs">
-          <span>AWS Certified ML Engineer — Associate</span>
-          <span>AWS Certified AI Practitioner</span>
-          <span>AWS Academy — Cloud Developing</span>
-          <span>NVIDIA — Generative AI / Diffusion</span>
-          <span>NVIDIA — Video AI at the Edge</span>
-          <span>NPTEL — Deep Learning for NLP · Intro to ML</span>
-        </div>
-      </div>
-    </div>
+<!-- AWARDS & RECOGNITION (light) -->
+<section id="awards" class="section--light recog">
+  <div class="wrap lead-row">
+    <span class="pill" data-reveal>Awards &amp; Recognition</span>
+    <h2 class="lead-title" data-split>To stand out, you break away from the ordinary.</h2>
+  </div>
+  <div class="wrap award-list" data-stagger="0.05">
+    <div class="award" data-reveal><span class="award-n">Kaggle — <em>1st Place</em></span><span class="award-y mono">2025</span></div>
+    <div class="award" data-reveal><span class="award-n">AWS Certified ML Engineer — <em>Associate</em></span><span class="award-y mono">2026</span></div>
+    <div class="award" data-reveal><span class="award-n">AWS Certified <em>AI Practitioner</em></span><span class="award-y mono">2026</span></div>
+    <div class="award" data-reveal><span class="award-n">AWS Academy — <em>Cloud Developing</em></span><span class="award-y mono">2025</span></div>
+    <div class="award" data-reveal><span class="award-n">NVIDIA — <em>Generative AI / Diffusion</em></span><span class="award-y mono">—</span></div>
+    <div class="award" data-reveal><span class="award-n">NVIDIA — <em>Video AI at the Edge</em></span><span class="award-y mono">—</span></div>
+    <div class="award" data-reveal><span class="award-n">NPTEL — <em>Deep Learning for NLP</em></span><span class="award-y mono">—</span></div>
+    <div class="award" data-reveal><span class="award-n">B.Tech AI &amp; ML — <em>CHARUSAT</em> · CGPA 8.91</span><span class="award-y mono">2026</span></div>
   </div>
 </section>
 
@@ -280,7 +262,7 @@
       <span><i class="dot"></i> OPEN TO AI ENGINEERING ROLES</span>
       <a href="mailto:meetradadiya0@gmail.com" class="contact-mail" data-magnetic>MEETRADADIYA0@GMAIL.COM</a>
     </div>
-    <h2 class="contact-title" data-split>LET'S BUILD<br>SOMETHING.</h2>
+    <h2 class="contact-title" data-liquid>LET'S BUILD<br>SOMETHING.</h2>
     <div class="contact-foot mono">
       <div class="contact-socials">
         <span class="faint">SOCIALS</span>
