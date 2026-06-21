@@ -52,7 +52,9 @@ em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
 .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 90; transform: scaleX(0); transform-origin: left; background: var(--accent); will-change: transform; }
 
 /* ---- preloader ---------------------------------------------------------- */
-.pre { position: fixed; inset: 0; z-index: 200; background: var(--paper); color: var(--ink); display: none; align-items: center; justify-content: center; overflow: hidden; }
+/* Scroll-driven intro: a normal first screen you scroll past to reach the
+   hero. In flow (not a fixed curtain), so it can never trap the page. */
+.pre { position: relative; z-index: 1; min-height: 100vh; background: var(--paper); color: var(--ink); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .pre-edge { position: absolute; top: 50%; transform: translateY(-50%); font-size: 11px; letter-spacing: 0.16em; }
 .pre-edge--l { left: 40px; } .pre-edge--r { right: 40px; }
 .pre-stack { position: relative; width: 132px; height: 168px; }
@@ -95,12 +97,9 @@ em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,58,18,0.5); } 70%,100% { box-shadow: 0 0 0 7px rgba(255,58,18,0); } }
 .hero-top-r { max-width: 42ch; text-align: right; line-height: 1.6; }
 .hero-title { font-family: var(--font-display); font-weight: 900; color: var(--ink); font-size: clamp(44px, 10vw, 150px); line-height: 0.86; letter-spacing: -0.04em; margin: 30px 0; text-transform: uppercase; overflow-wrap: normal; }
-.hero-box { display: inline-block; vertical-align: middle; width: clamp(96px, 12vw, 200px); height: clamp(58px, 7vw, 112px); border-radius: 12px; background: #0b0b0b; margin: 0 0.1em; position: relative; top: -0.05em; }
-/* fixed scroll-reveal panel — collapsed by default so it's invisible if JS
-   never runs; JS clips it to the headline box then expands it on scroll. */
-.hero-reveal { position: fixed; inset: 0; z-index: 6; background: #0b0b0b; pointer-events: none; clip-path: inset(50% 50% 50% 50%); will-change: clip-path; }
-.hero-reveal-3d { position: absolute; inset: 0; }
-.hero-reveal canvas { display: block; }
+.hero-box { display: inline-block; vertical-align: middle; width: clamp(96px, 12vw, 200px); height: clamp(58px, 7vw, 112px); border-radius: 12px; overflow: hidden; background: #0b0b0b; margin: 0 0.1em; position: relative; top: -0.05em; }
+.hero-box-3d { position: absolute; inset: 0; }
+.hero-box-3d canvas { display: block; }
 .hero-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 30px; padding-top: 26px; border-top: 1px solid var(--line-l); font-size: 11px; letter-spacing: 0.06em; color: var(--light-2); }
 .hero-role { display: inline-flex; align-items: center; gap: 8px; }
 .hero-role i { font-style: normal; color: var(--accent); }
