@@ -76,10 +76,13 @@ em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
 .nav-brand { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: -0.01em; white-space: nowrap; }
 .nav-brand sup { font-size: 8px; }
 .nav-links { display: flex; gap: 26px; font-size: 11px; letter-spacing: 0.12em; }
-.nav-links a { display: inline-flex; align-items: center; gap: 6px; opacity: 0.85; transition: opacity .2s; }
+.nav-links a { position: relative; display: inline-flex; align-items: center; gap: 6px; opacity: 0.85; padding-bottom: 5px; transition: opacity .2s; }
 .nav-links a i { font-style: normal; font-size: 7px; opacity: 0.6; transition: color .2s, opacity .2s; }
+.nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; opacity: 0.5; transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
 .nav-links a:hover { opacity: 1; }
+.nav-links a:hover::after { transform: scaleX(1); }
 .nav-links a.is-active i { color: var(--accent); opacity: 1; }
+.nav-links a.is-active::after { transform: scaleX(1); opacity: 1; }
 .nav-resume { font-size: 11px; letter-spacing: 0.12em; white-space: nowrap; opacity: 0.85; }
 @media (max-width: 920px) { .nav-links { display: none; } }
 
