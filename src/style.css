@@ -94,10 +94,13 @@ em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
 .hero-top .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 4px; animation: pulse 2.2s var(--ease) infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,58,18,0.5); } 70%,100% { box-shadow: 0 0 0 7px rgba(255,58,18,0); } }
 .hero-top-r { max-width: 42ch; text-align: right; line-height: 1.6; }
-.hero-title { font-family: var(--font-display); font-weight: 900; color: var(--ink); font-size: clamp(48px, 11.5vw, 184px); line-height: 0.86; letter-spacing: -0.04em; margin: 34px 0; text-transform: uppercase; }
-.hero-box { display: inline-flex; vertical-align: middle; width: clamp(120px, 17vw, 280px); height: clamp(74px, 9.5vw, 150px); border-radius: 12px; overflow: hidden; background: #0b0b0b; margin: 0 0.12em; position: relative; top: -0.06em; }
-.hero-box-3d { position: absolute; inset: 0; }
-.hero-box-3d canvas { display: block; }
+.hero-title { font-family: var(--font-display); font-weight: 900; color: var(--ink); font-size: clamp(44px, 10vw, 150px); line-height: 0.86; letter-spacing: -0.04em; margin: 30px 0; text-transform: uppercase; overflow-wrap: normal; }
+.hero-box { display: inline-block; vertical-align: middle; width: clamp(96px, 12vw, 200px); height: clamp(58px, 7vw, 112px); border-radius: 12px; background: #0b0b0b; margin: 0 0.1em; position: relative; top: -0.05em; }
+/* fixed scroll-reveal panel — collapsed by default so it's invisible if JS
+   never runs; JS clips it to the headline box then expands it on scroll. */
+.hero-reveal { position: fixed; inset: 0; z-index: 6; background: #0b0b0b; pointer-events: none; clip-path: inset(50% 50% 50% 50%); will-change: clip-path; }
+.hero-reveal-3d { position: absolute; inset: 0; }
+.hero-reveal canvas { display: block; }
 .hero-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 30px; padding-top: 26px; border-top: 1px solid var(--line-l); font-size: 11px; letter-spacing: 0.06em; color: var(--light-2); }
 .hero-role { display: inline-flex; align-items: center; gap: 8px; }
 .hero-role i { font-style: normal; color: var(--accent); }
@@ -177,6 +180,9 @@ em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
 .about-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 50px; align-items: start; }
 .about-portrait { position: relative; border-radius: 14px; overflow: hidden; }
 .about-portrait img { width: 100%; aspect-ratio: 4/5; object-fit: cover; filter: grayscale(1) contrast(1.04); }
+.about-portrait--mark { aspect-ratio: 4/5; background: #0b0b0b; color: var(--paper); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; padding: 34px; }
+.about-mark { font-family: var(--font-display); font-weight: 900; font-size: clamp(90px, 15vw, 210px); line-height: 0.78; letter-spacing: -0.05em; }
+.about-mark-sub { margin-top: 14px; font-size: 11px; letter-spacing: 0.12em; color: var(--dark-2); line-height: 1.7; }
 .about-cta { position: absolute; left: 16px; bottom: 16px; right: 16px; font-size: 13px; letter-spacing: 0.02em; color: #fff; padding: 14px 18px; border-radius: 100px; background: rgba(11,11,11,0.5); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.25); text-align: center; }
 .about-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; }
 .about-col-h { font-size: 11px; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 16px; }
