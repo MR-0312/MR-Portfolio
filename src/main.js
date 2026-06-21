@@ -336,9 +336,9 @@ function setupIndexRows() {
 /* ------------------------------------------------------------ 3D scenes */
 function init3D() {
   const s1 = document.querySelector('[data-scene3d]');
-  if (s1) { try { initScene3D(s1, { count: 240, scale: 1.3, drift: true }); } catch (e) { console.warn('3D failed', e); } }
+  if (s1) { try { initScene3D(s1, { count: 240, scale: 1.0, drift: true }); } catch (e) { console.warn('3D failed', e); } }
   const s2 = document.querySelector('[data-scene3d-2]');
-  if (s2) { try { initScene3D(s2, { count: 320, scale: 1.5, drift: true }); } catch (e) { console.warn('3D failed', e); } }
+  if (s2) { try { initScene3D(s2, { count: 320, scale: 1.15, drift: true }); } catch (e) { console.warn('3D failed', e); } }
 }
 
 /* -------------------------------------------------------------- magnetic */
