@@ -13,27 +13,24 @@ const EASE = 'power3.out';
 const PHRASES = [
   'real-time voice AI',
   'LLM agent orchestration',
-  'telephony & SIP integration',
+  'telephony & SIP',
+  'sub-3s voice RAG',
   'LLM fine-tuning',
-  'applied ML in production',
 ];
 
-const TICKER = ['LiveKit', 'Twilio SIP', 'ElevenLabs', 'Deepgram', 'Groq Whisper',
-  'XTTS', 'WebRTC', 'LangChain', 'Agentic RAG', 'PyTorch', 'Unsloth', 'LoRA',
-  'DeepSpeed', 'FastAPI', 'FAISS', 'AWS', 'Supabase', 'Docker'];
-
-/* Mark JS active so the CSS can hide reveal targets. Everything below is
-   wrapped: any failure removes `js` so content is never stuck hidden, and a
-   hard timeout force-reveals as a final safety net. */
+/* Mark JS active so the CSS can hide reveal targets + show the intro. Any
+   failure removes `js` so content is never stuck hidden, and a hard timeout
+   force-reveals as a final safety net. */
 root.classList.add('js');
 
 function forceReveal() {
   document.querySelectorAll('[data-reveal]').forEach((el) => {
-    el.style.opacity = '1';
-    el.style.transform = 'none';
+    el.style.opacity = '1'; el.style.transform = 'none';
   });
   document.querySelectorAll('[data-split]').forEach((el) => { el.style.opacity = '1'; });
   document.querySelectorAll('.split-line > span').forEach((s) => { s.style.transform = 'none'; });
+  const intro = document.querySelector('[data-intro]');
+  if (intro) intro.style.display = 'none';
 }
 const safety = setTimeout(forceReveal, 4000);
 
@@ -46,9 +43,9 @@ try {
 }
 
 function boot() {
-  buildTicker();
-  buildWave();
   startTyping();
+  setupCursor();
+  playIntro();
 
   // ---- Lenis smooth scroll, wired to GSAP's ticker + ScrollTrigger --------
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
@@ -58,23 +55,21 @@ function boot() {
 
   // ---- progress bar -------------------------------------------------------
   const bar = document.getElementById('progress');
-  ScrollTrigger.create({
-    start: 0, end: 'max',
-    onUpdate: (self) => { bar.style.transform = `scaleX(${self.progress})`; },
-  });
+  if (bar) ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (s) => { bar.style.transform = `scaleX(${s.progress})`; } });
 
-  setupMarquee();
   setupMagnetic();
   setupProjects();
   setupActiveNav();
-  setupHeroScroll();
+  setupCollage();
 
-  // 3D centerpiece in the hero card
-  const stage = document.querySelector('[data-scene3d]');
-  if (stage) { try { initScene3D(stage); } catch (e) { console.warn('3D scene failed', e); } }
+  // two monochrome 3D objects: capabilities panel + contact backdrop
+  const s1 = document.querySelector('[data-scene3d]');
+  if (s1) { try { initScene3D(s1, { count: 180, scale: 1.0 }); } catch (e) { console.warn('3D failed', e); } }
+  const s2 = document.querySelector('[data-scene3d-2]');
+  if (s2) { try { initScene3D(s2, { count: 320, scale: 1.5, drift: true }); } catch (e) { console.warn('3D failed', e); } }
 
-  // Headings split into lines — run after fonts load so line breaks measure
-  // correctly, but cap the wait so a slow/blocked font request can't stall.
+  // Split headings after fonts load so line breaks measure correctly, capped
+  // so a slow/blocked font request can never stall the reveals.
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   Promise.race([fontsReady, wait(600)]).then(() => {
     setupSplitHeadings();
@@ -86,43 +81,30 @@ function boot() {
 }
 
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
-// Above-the-fold elements are already past their ScrollTrigger start at load,
-// where the trigger won't reliably fire — so play those immediately.
 function inView(el) { return el.getBoundingClientRect().top < window.innerHeight * 0.92; }
 
-/* ---------------------------------------------------------------- ticker */
-function buildTicker() {
-  const track = document.querySelector('[data-marquee-track]');
-  if (!track) return;
-  const makeSet = () => {
-    const frag = document.createDocumentFragment();
-    TICKER.forEach((t) => {
-      const s = document.createElement('span');
-      s.className = 'ticker-item';
-      s.innerHTML = `${t}<b>✦</b>`;
-      frag.appendChild(s);
-    });
-    return frag;
-  };
-  track.appendChild(makeSet());
-  track.appendChild(makeSet()); // duplicate for a seamless -50% loop
-  gsap.to(track, { xPercent: -50, duration: 38, ease: 'none', repeat: -1 });
+/* ----------------------------------------------------------- intro screen */
+function playIntro() {
+  const intro = document.querySelector('[data-intro]');
+  if (!intro) return;
+  gsap.to(intro, {
+    yPercent: -100, duration: 0.9, ease: 'power4.inOut', delay: 1.1,
+    onComplete: () => { intro.style.display = 'none'; ScrollTrigger.refresh(); },
+  });
 }
 
-/* ------------------------------------------------------------------ wave */
-function buildWave() {
-  const wave = document.querySelector('[data-wave]');
-  if (!wave) return;
-  for (let i = 0; i < 40; i++) {
-    const dur = (0.7 + ((i * 7) % 9) * 0.12).toFixed(2);
-    const delay = ((i * 0.05) % 1.4).toFixed(2);
-    const h = (0.2 + ((i * 37) % 80) / 100).toFixed(2);
-    const bar = document.createElement('span');
-    bar.style.setProperty('--wdur', dur + 's');
-    bar.style.setProperty('--wdelay', '-' + delay + 's');
-    bar.style.transform = `scaleY(${h})`; // static baseline if CSS anim is blocked
-    wave.appendChild(bar);
-  }
+/* --------------------------------------------------------------- cursor */
+function setupCursor() {
+  const cur = document.querySelector('[data-cursor]');
+  if (!cur || window.matchMedia('(hover: none)').matches) return;
+  const xTo = gsap.quickTo(cur, 'x', { duration: 0.22, ease: 'power3' });
+  const yTo = gsap.quickTo(cur, 'y', { duration: 0.22, ease: 'power3' });
+  window.addEventListener('pointermove', (e) => { xTo(e.clientX); yTo(e.clientY); }, { passive: true });
+  const hot = 'a, button, [data-magnetic], .row, .proj-row, .stat';
+  document.querySelectorAll(hot).forEach((el) => {
+    el.addEventListener('pointerenter', () => cur.classList.add('is-hover'));
+    el.addEventListener('pointerleave', () => cur.classList.remove('is-hover'));
+  });
 }
 
 /* ---------------------------------------------------------------- typing */
@@ -133,41 +115,45 @@ function startTyping() {
   setInterval(() => {
     if (hold > 0) { hold--; return; }
     const full = PHRASES[pi];
-    if (!del) { ci++; if (ci >= full.length) { ci = full.length; del = true; hold = 30; } }
+    if (!del) { ci++; if (ci >= full.length) { ci = full.length; del = true; hold = 28; } }
     else { ci--; if (ci <= 0) { ci = 0; del = false; pi = (pi + 1) % PHRASES.length; hold = 5; } }
     el.textContent = full.slice(0, ci);
   }, 55);
+}
+
+/* -------------------------------------------------- collage parallax */
+function setupCollage() {
+  const imgs = gsap.utils.toArray('[data-collage] .c-img');
+  if (!imgs.length) return;
+  const sec = document.querySelector('.manifesto');
+  imgs.forEach((img) => {
+    const depth = parseFloat(img.dataset.depth) || 0.1;
+    gsap.fromTo(img, { yPercent: depth * 120 }, {
+      yPercent: -depth * 120, ease: 'none',
+      scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+  });
 }
 
 /* ------------------------------------------------------- split headings */
 function setupSplitHeadings() {
   document.querySelectorAll('[data-split]').forEach((el) => {
     const inners = splitLines(el);
-    el.style.opacity = '1'; // parent shown; inner lines stay hidden via gsap's from
-    const to = { yPercent: 0, duration: 0.95, ease: EASE, stagger: 0.1 };
-    if (inView(el)) {
-      gsap.fromTo(inners, { yPercent: 115 }, to);
-    } else {
-      gsap.fromTo(inners, { yPercent: 115 },
-        { ...to, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
-    }
+    el.style.opacity = '1';
+    const to = { yPercent: 0, duration: 1.0, ease: EASE, stagger: 0.1 };
+    if (inView(el)) gsap.fromTo(inners, { yPercent: 115 }, to);
+    else gsap.fromTo(inners, { yPercent: 115 }, { ...to, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
   });
 }
 
-// Splits an element's text into visual lines, preserving explicit <br> breaks.
+// Splits text into visual lines, preserving explicit <br> breaks.
 function splitLines(el) {
-  // Tokens: words and explicit line breaks (from <br>).
   const tokens = [];
   el.childNodes.forEach((node) => {
-    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-      tokens.push({ br: true });
-    } else {
-      (node.textContent || '').split(/\s+/).filter(Boolean)
-        .forEach((w) => tokens.push({ word: w }));
-    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') tokens.push({ br: true });
+    else (node.textContent || '').split(/\s+/).filter(Boolean).forEach((w) => tokens.push({ word: w }));
   });
 
-  // Lay words out as inline-blocks to measure natural wrap points.
   el.textContent = '';
   const measured = tokens.map((t) => {
     if (t.br) { el.appendChild(document.createElement('br')); return t; }
@@ -180,26 +166,23 @@ function splitLines(el) {
     return t;
   });
 
-  // Group into lines by vertical offset, breaking on explicit <br> too.
   const lines = [];
   let cur = null, lastTop = null;
   measured.forEach((t) => {
     if (t.br) { cur = null; lastTop = null; return; }
     const top = t.span.offsetTop;
-    if (cur === null || (lastTop !== null && Math.abs(top - lastTop) > 2)) {
-      cur = []; lines.push(cur);
-    }
+    if (cur === null || (lastTop !== null && Math.abs(top - lastTop) > 2)) { cur = []; lines.push(cur); }
     cur.push(t.span.textContent);
     lastTop = top;
   });
 
   el.textContent = '';
   const inners = [];
-  lines.forEach((lineWords) => {
+  lines.forEach((words) => {
     const line = document.createElement('span');
     line.className = 'split-line';
     const inner = document.createElement('span');
-    inner.textContent = lineWords.join(' ');
+    inner.textContent = words.join(' ');
     line.appendChild(inner);
     el.appendChild(line);
     inners.push(inner);
@@ -210,30 +193,19 @@ function splitLines(el) {
 /* --------------------------------------------------------------- reveals */
 function setupReveals() {
   const claimed = new Set();
-
   document.querySelectorAll('[data-stagger]').forEach((container) => {
     const step = parseFloat(container.getAttribute('data-stagger')) || 0.08;
     const kids = Array.from(container.querySelectorAll('[data-reveal]'));
     kids.forEach((k) => claimed.add(k));
     const to = { opacity: 1, y: 0, duration: 0.85, ease: EASE, stagger: step };
-    if (inView(container)) {
-      gsap.fromTo(kids, { opacity: 0, y: 30 }, to);
-    } else {
-      gsap.fromTo(kids, { opacity: 0, y: 30 },
-        { ...to, scrollTrigger: { trigger: container, start: 'top 84%', once: true } });
-    }
+    if (inView(container)) gsap.fromTo(kids, { opacity: 0, y: 28 }, to);
+    else gsap.fromTo(kids, { opacity: 0, y: 28 }, { ...to, scrollTrigger: { trigger: container, start: 'top 86%', once: true } });
   });
-
   document.querySelectorAll('[data-reveal]').forEach((el) => {
     if (claimed.has(el)) return;
-    const delay = parseFloat(el.getAttribute('data-reveal-delay')) || 0;
-    const to = { opacity: 1, y: 0, duration: 0.85, ease: EASE, delay };
-    if (inView(el)) {
-      gsap.fromTo(el, { opacity: 0, y: 30 }, to);
-    } else {
-      gsap.fromTo(el, { opacity: 0, y: 30 },
-        { ...to, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
-    }
+    const to = { opacity: 1, y: 0, duration: 0.85, ease: EASE };
+    if (inView(el)) gsap.fromTo(el, { opacity: 0, y: 28 }, to);
+    else gsap.fromTo(el, { opacity: 0, y: 28 }, { ...to, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
   });
 }
 
@@ -243,24 +215,18 @@ function setupCounts() {
     const target = parseInt(el.dataset.target, 10) || 0;
     const suffix = el.dataset.suffix || '';
     const obj = { v: 0 };
-    const to = {
-      v: target, duration: 1.6, ease: 'power2.out',
-      onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; },
-    };
-    if (inView(el)) {
-      gsap.to(obj, to);
-    } else {
-      gsap.to(obj, { ...to, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
-    }
+    const to = { v: target, duration: 1.6, ease: 'power2.out', onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; } };
+    if (inView(el)) gsap.to(obj, to);
+    else gsap.to(obj, { ...to, scrollTrigger: { trigger: el, start: 'top 92%', once: true } });
   });
 }
 
 /* ------------------------------------------------- pinned project showcase */
 function setupProjects() {
   const shots = Array.from(document.querySelectorAll('[data-shot]'));
-  const panels = Array.from(document.querySelectorAll('.proj-panel'));
+  const rows = Array.from(document.querySelectorAll('.proj-row'));
   const indexEl = document.querySelector('[data-proj-current]');
-  if (!shots.length || !panels.length) return;
+  if (!shots.length || !rows.length) return;
   let active = -1;
   const setActive = (i) => {
     if (i === active) return;
@@ -268,24 +234,8 @@ function setupProjects() {
     shots.forEach((s, j) => s.classList.toggle('is-active', j === i));
     if (indexEl) indexEl.textContent = String(i + 1).padStart(2, '0');
   };
-  panels.forEach((panel, i) => {
-    ScrollTrigger.create({
-      trigger: panel, start: 'top center', end: 'bottom center',
-      onToggle: (self) => { if (self.isActive) setActive(i); },
-    });
-  });
-}
-
-/* ----------------------------------------------------------- marquee skew */
-function setupMarquee() {
-  const ticker = document.querySelector('[data-marquee]');
-  if (!ticker) return;
-  const skewTo = gsap.quickTo(ticker, 'skewX', { duration: 0.4, ease: EASE });
-  ScrollTrigger.create({
-    onUpdate: (self) => {
-      const v = Math.max(-5, Math.min(5, self.getVelocity() / -260));
-      skewTo(v);
-    },
+  rows.forEach((row, i) => {
+    ScrollTrigger.create({ trigger: row, start: 'top center', end: 'bottom center', onToggle: (s) => { if (s.isActive) setActive(i); } });
   });
 }
 
@@ -309,23 +259,6 @@ function setupActiveNav() {
   document.querySelectorAll('.nav-links a[data-nav]').forEach((a) => {
     const sec = document.getElementById(a.dataset.nav);
     if (!sec) return;
-    ScrollTrigger.create({
-      trigger: sec, start: 'top center', end: 'bottom center',
-      onToggle: (self) => a.classList.toggle('is-active', self.isActive),
-    });
-  });
-}
-
-/* ------------------------------------------------------- hero scroll fx */
-function setupHeroScroll() {
-  const hero = document.querySelector('.hero');
-  if (!hero) return;
-  gsap.to('[data-parallax]', {
-    yPercent: -10, ease: 'none',
-    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-  });
-  gsap.to('.scroll-cue', {
-    opacity: 0, ease: 'none',
-    scrollTrigger: { start: 0, end: 220, scrub: true },
+    ScrollTrigger.create({ trigger: sec, start: 'top center', end: 'bottom center', onToggle: (s) => a.classList.toggle('is-active', s.isActive) });
   });
 }

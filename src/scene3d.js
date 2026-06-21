@@ -6,56 +6,53 @@ import {
   Clock, ACESFilmicToneMapping, Vector2, AdditiveBlending,
 } from 'three';
 
-const ACCENT = 0x2436ff;   // cobalt
-const SPARK  = 0xff5a2e;   // warm spark
-const LIGHT  = 0xeae7ff;
+// Monochrome palette to match the black & white cappen aesthetic.
+const WHITE = 0xf1f0ec;
+const SILVER = 0xbfbeb8;
+const SPARK  = 0xff3a12;   // the one red-orange micro-accent
 
-// An abstract "voice orb": a faceted core that pulses like a waveform, wrapped
-// in two crossed wireframe rings, inside a soft particle field. Returns the
-// pieces the animation loop needs (core for the pulse, its base positions).
-function buildOrb() {
+// An abstract "voice orb": a faceted metal core that pulses like a waveform,
+// wrapped in crossed wireframe rings inside a soft particle field. Returns the
+// pieces the animation loop needs.
+function buildOrb(scale) {
   const orb = new Group();
+  orb.scale.setScalar(scale);
 
-  // faceted core — keep a copy of the rest positions so we can displace + restore
   const coreGeo = new IcosahedronGeometry(1.25, 4);
   const base = coreGeo.attributes.position.array.slice();
   const coreMat = new MeshStandardMaterial({
-    color: ACCENT, emissive: ACCENT, emissiveIntensity: 0.35,
-    metalness: 0.4, roughness: 0.25, flatShading: true,
+    color: SILVER, metalness: 0.85, roughness: 0.28, flatShading: true,
   });
   const core = new Mesh(coreGeo, coreMat);
   orb.add(core);
 
-  // glowing wireframe shell over the core
   const shell = new Mesh(
-    new IcosahedronGeometry(1.32, 2),
-    new MeshBasicMaterial({ color: LIGHT, wireframe: true, transparent: true, opacity: 0.18 }),
+    new IcosahedronGeometry(1.34, 2),
+    new MeshBasicMaterial({ color: WHITE, wireframe: true, transparent: true, opacity: 0.16 }),
   );
   orb.add(shell);
 
-  // two crossed rings
-  const ringMat = new MeshBasicMaterial({ color: ACCENT, wireframe: true, transparent: true, opacity: 0.5 });
-  const ringA = new Mesh(new TorusGeometry(1.95, 0.012, 8, 120), ringMat);
+  const ringMat = new MeshBasicMaterial({ color: WHITE, wireframe: true, transparent: true, opacity: 0.4 });
+  const ringA = new Mesh(new TorusGeometry(1.95, 0.01, 8, 120), ringMat);
   ringA.rotation.x = Math.PI * 0.5;
-  const ringB = new Mesh(new TorusGeometry(2.25, 0.012, 8, 120), ringMat.clone());
+  const ringB = new Mesh(new TorusGeometry(2.25, 0.01, 8, 120), ringMat.clone());
   ringB.rotation.set(Math.PI * 0.32, Math.PI * 0.2, 0);
   orb.add(ringA, ringB);
 
-  // a single warm spark orbiting the orb
+  // a single warm spark orbiting — the only color in the scene
   const spark = new Mesh(
-    new IcosahedronGeometry(0.09, 1),
-    new MeshStandardMaterial({ color: SPARK, emissive: SPARK, emissiveIntensity: 2.0, roughness: 0.3 }),
+    new IcosahedronGeometry(0.08, 1),
+    new MeshStandardMaterial({ color: SPARK, emissive: SPARK, emissiveIntensity: 2.2, roughness: 0.3 }),
   );
   orb.add(spark);
 
   return { orb, core, coreGeo, base, ringA, ringB, spark };
 }
 
-// Soft particle field drifting behind the orb.
-function buildParticles(count = 260) {
+function buildParticles(count, scale) {
   const pos = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const r = 3.2 + Math.random() * 3.4;
+    const r = (3.0 + Math.random() * 3.6) * scale;
     const th = Math.random() * Math.PI * 2;
     const ph = Math.acos(2 * Math.random() - 1);
     pos[i * 3]     = r * Math.sin(ph) * Math.cos(th);
@@ -64,24 +61,25 @@ function buildParticles(count = 260) {
   }
   const geo = new BufferGeometry();
   geo.setAttribute('position', new BufferAttribute(pos, 3));
-  const mat = new PointsMaterial({
-    color: LIGHT, size: 0.03, transparent: true, opacity: 0.6,
-    blending: AdditiveBlending, depthWrite: false,
-  });
+  const mat = new PointsMaterial({ color: WHITE, size: 0.022 * scale, transparent: true, opacity: 0.5, blending: AdditiveBlending, depthWrite: false });
   return new Points(geo, mat);
 }
 
-export function initScene3D(container) {
+export function initScene3D(container, opts = {}) {
+  const count = opts.count || 200;
+  const scale = opts.scale || 1.0;
+  const drift = !!opts.drift;
+
   let renderer;
   try {
     renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   } catch (e) {
-    return () => {}; // no WebGL — the framed gradient behind the canvas remains as fallback
+    return () => {}; // no WebGL — gradient panel behind the canvas remains as fallback
   }
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(40, 1, 0.1, 100);
-  camera.position.set(0, 0, 6.4);
+  camera.position.set(0, 0, 6.6);
 
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   renderer.toneMapping = ACESFilmicToneMapping;
@@ -91,24 +89,21 @@ export function initScene3D(container) {
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
 
-  // lights
-  scene.add(new AmbientLight(0xffffff, 0.5));
-  scene.add(new HemisphereLight(0xbcc4ff, 0x110a1a, 0.7));
-  const key = new DirectionalLight(0xffffff, 1.6); key.position.set(3, 4, 5); scene.add(key);
-  const rim = new PointLight(ACCENT, 5.0, 30); rim.position.set(-4, 1, 2); scene.add(rim);
-  const rim2 = new PointLight(SPARK, 2.0, 30); rim2.position.set(4, -2, 3); scene.add(rim2);
+  scene.add(new AmbientLight(0xffffff, 0.45));
+  scene.add(new HemisphereLight(0xffffff, 0x111111, 0.7));
+  const key = new DirectionalLight(0xffffff, 2.0); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new PointLight(0xffffff, 3.5, 30); rim.position.set(-4, 1, 2); scene.add(rim);
+  const warm = new PointLight(SPARK, 1.4, 30); warm.position.set(4, -2, 3); scene.add(warm);
 
-  // content
   const world = new Group();
   scene.add(world);
-  const { orb, core, coreGeo, base, ringA, ringB, spark } = buildOrb();
-  const particles = buildParticles();
+  const { core, coreGeo, base, ringA, ringB, spark, orb } = buildOrb(scale);
+  const particles = buildParticles(count, scale);
   world.add(orb, particles);
 
-  // interaction state
   const pointer = new Vector2(0, 0);
   const target = new Vector2(0, 0);
-  let spin = 0;            // click impulse
+  let spin = 0;
   const clock = new Clock();
   let running = true;
 
@@ -119,7 +114,6 @@ export function initScene3D(container) {
   }
   function onLeave() { target.set(0, 0); }
   function onClick() { spin += Math.PI * 1.2; }
-
   window.addEventListener('pointermove', onPointerMove, { passive: true });
   container.addEventListener('pointerleave', onLeave);
   renderer.domElement.addEventListener('click', onClick);
@@ -143,13 +137,11 @@ export function initScene3D(container) {
     const t = clock.getElapsedTime();
     const dt = Math.min(0.05, clock.getDelta());
 
-    // ease pointer
     pointer.x += (target.x - pointer.x) * 0.06;
     pointer.y += (target.y - pointer.y) * 0.06;
 
-    // whole rig: idle float + cursor tilt + click spin
-    world.position.y = Math.sin(t * 1.1) * 0.08;
-    world.rotation.y = pointer.x * 0.7 + t * 0.12 + spin;
+    world.position.y = Math.sin(t * 1.1) * 0.08 * scale;
+    world.rotation.y = pointer.x * 0.7 + t * (drift ? 0.05 : 0.12) + spin;
     world.rotation.x = pointer.y * 0.4 + Math.sin(t * 0.5) * 0.05;
     spin *= Math.pow(0.92, dt * 60);
 
@@ -158,25 +150,17 @@ export function initScene3D(container) {
     for (let i = 0; i < vCount; i++) {
       const ix = i * 3;
       const bx = base[ix], by = base[ix + 1], bz = base[ix + 2];
-      const len = Math.hypot(bx, by, bz) || 1;
       const n = Math.sin(bx * 3 + t * 2.4) * Math.cos(by * 3 + t * 1.8) * Math.sin(bz * 3 + t * 2.0);
       const k = 1 + n * amp;
-      posAttr.array[ix]     = (bx / len) * len * k;
-      posAttr.array[ix + 1] = (by / len) * len * k;
-      posAttr.array[ix + 2] = (bz / len) * len * k;
+      posAttr.array[ix] = bx * k; posAttr.array[ix + 1] = by * k; posAttr.array[ix + 2] = bz * k;
     }
     posAttr.needsUpdate = true;
     coreGeo.computeVertexNormals();
-    core.material.emissiveIntensity = 0.3 + Math.abs(Math.sin(t * 1.6)) * 0.35;
 
-    // rings counter-rotate
     ringA.rotation.z = t * 0.5;
     ringB.rotation.z = -t * 0.35;
-
-    // spark orbits
     spark.position.set(Math.cos(t * 1.3) * 2.1, Math.sin(t * 0.9) * 1.4, Math.sin(t * 1.3) * 2.1);
 
-    // particles drift
     particles.rotation.y = t * 0.04;
     particles.rotation.x = Math.sin(t * 0.2) * 0.1;
 
@@ -185,7 +169,6 @@ export function initScene3D(container) {
   }
   let raf = requestAnimationFrame(frame);
 
-  // pause when tab hidden (saves battery/CPU)
   function onVisibility() {
     if (document.hidden) { running = false; cancelAnimationFrame(raf); }
     else if (!running) { running = true; clock.getDelta(); raf = requestAnimationFrame(frame); }
