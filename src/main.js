@@ -25,7 +25,6 @@ function forceReveal() {
   document.querySelectorAll('[data-reveal]').forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; });
   document.querySelectorAll('[data-split],[data-liquid]').forEach((el) => { el.style.opacity = '1'; });
   document.querySelectorAll('.split-line > span, .liq-char').forEach((s) => { s.style.transform = 'none'; });
-  const pre = document.querySelector('[data-pre]'); if (pre) pre.style.display = 'none';
 }
 const safety = setTimeout(forceReveal, 5000);
 
@@ -52,7 +51,6 @@ function boot() {
   setupActiveNav();
   setupCollage();
   setupIndexRows();
-  setupHeroReveal();
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   Promise.race([fontsReady, wait(600)]).then(() => {
@@ -69,14 +67,16 @@ function boot() {
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 function inView(el) { return el.getBoundingClientRect().top < window.innerHeight * 0.92; }
 
-/* --------------------------------------------------------------- preloader */
-// Scroll-driven preloader (cappen-style): the thumbnail strip cycles, and the
-// curtain lifts away the moment the visitor starts to scroll. A fallback timer
-// lifts it anyway so it can never trap the page.
+/* --------------------------------------------------------------- intro */
+// Scroll-driven intro (cappen-style): an in-flow first screen. The thumbnail
+// strip auto-cycles, and as you scroll the intro away the strip parallaxes,
+// the counter fills, and it dissolves to reveal the hero below. No fixed
+// curtain / scroll-lock, so it can never trap the page.
 function playPreloader() {
   const pre = document.querySelector('[data-pre]');
   if (!pre) return;
   const imgs = Array.from(pre.querySelectorAll('.pre-stack img'));
+  const stack = pre.querySelector('[data-pre-stack]');
   const countEl = pre.querySelector('[data-pre-count]');
   if (imgs.length) gsap.set(imgs[0], { opacity: 1 });
 
@@ -85,51 +85,14 @@ function playPreloader() {
     i = (i + 1) % imgs.length;
     imgs.forEach((im, j) => gsap.to(im, { opacity: j === i ? 1 : 0, duration: 0.12 }));
   }, 150);
-  const c = { v: 0 };
-  gsap.to(c, { v: 99, duration: 1.4, ease: 'power1.inOut',
-    onUpdate: () => { if (countEl) countEl.textContent = String(Math.round(c.v)).padStart(2, '0'); } });
 
-  let lifted = false;
-  const evs = ['wheel', 'touchmove', 'scroll', 'keydown'];
-  const lift = () => {
-    if (lifted) return; lifted = true;
-    clearInterval(cyc);
-    evs.forEach((e) => window.removeEventListener(e, lift));
-    pre.removeEventListener('click', lift);
-    gsap.to(imgs, { scale: 0.9, stagger: 0.03, duration: 0.35, ease: EASE });
-    gsap.to(pre, { yPercent: -100, duration: 0.9, ease: 'power4.inOut', delay: 0.1,
-      onComplete: () => { pre.style.display = 'none'; ScrollTrigger.refresh(); } });
-  };
-  evs.forEach((e) => window.addEventListener(e, lift, { passive: true }));
-  pre.addEventListener('click', lift);
-  setTimeout(lift, 6000); // safety: lift even if the visitor never scrolls
-}
-
-/* --------------------------------------- hero scroll reveal (box → screen) */
-// The fixed black panel is clipped to the headline's media box, then the clip
-// expands to fill the viewport as the hero scrolls — the white→black wipe.
-function setupHeroReveal() {
-  const hero = document.querySelector('.hero');
-  const box = document.querySelector('[data-hero-box]');
-  const panel = document.querySelector('[data-hero-reveal]');
-  if (!hero || !box || !panel) return;
-  let s = { t: 0, r: 0, b: 0, l: 0 };
-  const measure = () => {
-    const r = box.getBoundingClientRect();
-    s = { t: r.top, r: window.innerWidth - r.right, b: window.innerHeight - r.bottom, l: r.left };
-  };
-  const apply = (e) => {
-    const k = Math.max(0, e);
-    panel.style.clipPath = `inset(${s.t * k}px ${s.r * k}px ${s.b * k}px ${s.l * k}px round ${12 * k}px)`;
-  };
+  if (stack) gsap.to(stack, { yPercent: -42, ease: 'none', scrollTrigger: { trigger: pre, start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to(pre, { autoAlpha: 0.12, ease: 'none', scrollTrigger: { trigger: pre, start: 'center top', end: 'bottom top', scrub: true } });
   ScrollTrigger.create({
-    trigger: hero, start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true,
-    onRefresh: () => { measure(); apply(1); },
-    onUpdate: (self) => apply(1 - self.progress),
-    onLeave: () => gsap.to(panel, { autoAlpha: 0, duration: 0.3 }),
-    onEnterBack: () => gsap.to(panel, { autoAlpha: 1, duration: 0.3 }),
+    trigger: pre, start: 'top top', end: 'bottom top', scrub: true,
+    onUpdate: (self) => { if (countEl) countEl.textContent = String(Math.round(self.progress * 99)).padStart(2, '0'); },
+    onLeave: () => clearInterval(cyc),
   });
-  measure(); apply(1);
 }
 
 /* --------------------------------------------------------------- cursor */
@@ -295,7 +258,7 @@ function setupIndexRows() {
 /* ------------------------------------------------------------ 3D scenes */
 function init3D() {
   const s1 = document.querySelector('[data-scene3d]');
-  if (s1) { try { initScene3D(s1, { count: 240, scale: 1.3, drift: true }); } catch (e) { console.warn('3D failed', e); } }
+  if (s1) { try { initScene3D(s1, { count: 110, scale: 0.85 }); } catch (e) { console.warn('3D failed', e); } }
   const s2 = document.querySelector('[data-scene3d-2]');
   if (s2) { try { initScene3D(s2, { count: 320, scale: 1.5, drift: true }); } catch (e) { console.warn('3D failed', e); } }
 }
