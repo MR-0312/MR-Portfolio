@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initScene3D } from './scene3d.js';
+import { initFluidCursor } from './fluidCursor.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,6 +38,7 @@ catch (err) {
 function boot() {
   startTyping();
   setupCursor();
+  initFluidCursor();
   playPreloader();
 
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
@@ -75,12 +77,12 @@ function inView(el) { return el.getBoundingClientRect().top < window.innerHeight
 function playPreloader() {
   const pre = document.querySelector('[data-pre]');
   if (!pre) return;
-  // Intro plays only once per visitor. On repeat visits, remove it from flow
-  // so the page opens straight on the hero (no scroll-past intro again).
+  // Intro plays once per session. Within a visit (reloads / coming back to the
+  // tab) it's skipped so it isn't repetitive; a fresh session/tab shows it again.
   let introSeen = false;
-  try { introSeen = localStorage.getItem('mr_intro_seen') === '1'; } catch (e) {}
+  try { introSeen = sessionStorage.getItem('mr_intro_seen') === '1'; } catch (e) {}
   if (introSeen) { pre.remove(); return; }
-  try { localStorage.setItem('mr_intro_seen', '1'); } catch (e) {}
+  try { sessionStorage.setItem('mr_intro_seen', '1'); } catch (e) {}
   const imgs = Array.from(pre.querySelectorAll('.pre-stack img'));
   const stack = pre.querySelector('[data-pre-stack]');
   const countEl = pre.querySelector('[data-pre-count]');
@@ -105,6 +107,7 @@ function playPreloader() {
 function setupCursor() {
   const cur = document.querySelector('[data-cursor]');
   if (!cur || window.matchMedia('(hover: none)').matches) return;
+  gsap.set(cur, { x: -100, y: -100 }); // park off-screen until the first move (no top-left dot)
   const xTo = gsap.quickTo(cur, 'x', { duration: 0.22, ease: 'power3' });
   const yTo = gsap.quickTo(cur, 'y', { duration: 0.22, ease: 'power3' });
   window.addEventListener('pointermove', (e) => { xTo(e.clientX); yTo(e.clientY); }, { passive: true });
