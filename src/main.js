@@ -51,6 +51,7 @@ function boot() {
   setupActiveNav();
   setupCollage();
   setupIndexRows();
+  setupHeroReveal();
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   Promise.race([fontsReady, wait(600)]).then(() => {
@@ -93,6 +94,42 @@ function playPreloader() {
     onUpdate: (self) => { if (countEl) countEl.textContent = String(Math.round(self.progress * 99)).padStart(2, '0'); },
     onLeave: () => clearInterval(cyc),
   });
+}
+
+/* ----------------------------------------- hero scroll wipe (box → screen) */
+// Pin the hero and expand the fixed black panel (clipped to the headline box)
+// until it fills the viewport — the cappen white→black wipe revealing the 3D.
+function setupHeroReveal() {
+  const hero = document.querySelector('.hero');
+  const box = document.querySelector('[data-hero-box]');
+  const panel = document.querySelector('[data-hero-reveal]');
+  if (!hero || !box || !panel) return;
+  const s = { t: 0, r: 0, b: 0, l: 0 };
+  const measure = () => {
+    // Vertical offset is measured relative to the hero (scroll-independent), so
+    // it stays correct no matter when ScrollTrigger refreshes; during the pin
+    // the hero is fixed at top:0 so this offset is the box's viewport position.
+    const hr = hero.getBoundingClientRect();
+    const br = box.getBoundingClientRect();
+    const top = br.top - hr.top;
+    s.t = top; s.l = br.left;
+    s.r = window.innerWidth - (br.left + br.width);
+    s.b = window.innerHeight - (top + br.height);
+  };
+  const apply = (k) => {
+    const m = Math.max(0, k);
+    panel.style.clipPath = `inset(${s.t * m}px ${s.r * m}px ${s.b * m}px ${s.l * m}px round ${12 * m}px)`;
+  };
+  ScrollTrigger.create({
+    trigger: hero, start: 'top top', end: '+=100%', pin: true, scrub: true, invalidateOnRefresh: true,
+    onRefresh: () => { measure(); apply(1); },
+    onUpdate: (self) => apply(1 - self.progress),
+    // Black out the hero behind the panel before fading it, so the white hero
+    // never flashes back between the wipe and the (dark) manifesto.
+    onLeave: () => { gsap.set(hero, { backgroundColor: '#0b0b0b' }); gsap.set('.hero-inner', { autoAlpha: 0 }); gsap.to(panel, { autoAlpha: 0, duration: 0.3 }); },
+    onEnterBack: () => { gsap.set(hero, { backgroundColor: '' }); gsap.set('.hero-inner', { autoAlpha: 1 }); gsap.to(panel, { autoAlpha: 1, duration: 0.3 }); },
+  });
+  measure(); apply(1);
 }
 
 /* --------------------------------------------------------------- cursor */
@@ -258,7 +295,7 @@ function setupIndexRows() {
 /* ------------------------------------------------------------ 3D scenes */
 function init3D() {
   const s1 = document.querySelector('[data-scene3d]');
-  if (s1) { try { initScene3D(s1, { count: 110, scale: 0.85 }); } catch (e) { console.warn('3D failed', e); } }
+  if (s1) { try { initScene3D(s1, { count: 240, scale: 1.3, drift: true }); } catch (e) { console.warn('3D failed', e); } }
   const s2 = document.querySelector('[data-scene3d-2]');
   if (s2) { try { initScene3D(s2, { count: 320, scale: 1.5, drift: true }); } catch (e) { console.warn('3D failed', e); } }
 }
