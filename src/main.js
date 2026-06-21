@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const root = document.documentElement;
 const EASE = 'power3.out';
-const PRE_DUR = 0.25; // small delay before above-the-fold content animates in
+const PRE_DUR = 2.4; // hero content animates in as the loader curtain lifts
 
 const PHRASES = [
   'real-time voice AI',
@@ -25,6 +25,7 @@ function forceReveal() {
   document.querySelectorAll('[data-reveal]').forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; });
   document.querySelectorAll('[data-split],[data-liquid]').forEach((el) => { el.style.opacity = '1'; });
   document.querySelectorAll('.split-line > span, .liq-char').forEach((s) => { s.style.transform = 'none'; });
+  const pre = document.querySelector('[data-pre]'); if (pre) pre.style.display = 'none';
 }
 const safety = setTimeout(forceReveal, 5000);
 
@@ -68,32 +69,26 @@ function boot() {
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 function inView(el) { return el.getBoundingClientRect().top < window.innerHeight * 0.92; }
 
-/* --------------------------------------------------------------- intro */
-// Scroll-driven intro (cappen-style): an in-flow first screen. The thumbnail
-// strip auto-cycles, and as you scroll the intro away the strip parallaxes,
-// the counter fills, and it dissolves to reveal the hero below. No fixed
-// curtain / scroll-lock, so it can never trap the page.
+/* --------------------------------------------------------------- loader */
+// A loader curtain: a continuous vertical film-strip of project thumbnails, a
+// filling progress bar + counter, then the curtain lifts to reveal the hero.
 function playPreloader() {
   const pre = document.querySelector('[data-pre]');
   if (!pre) return;
-  const imgs = Array.from(pre.querySelectorAll('.pre-stack img'));
-  const stack = pre.querySelector('[data-pre-stack]');
+  const track = pre.querySelector('[data-pre-track]');
+  const bar = pre.querySelector('[data-pre-bar]');
   const countEl = pre.querySelector('[data-pre-count]');
-  if (imgs.length) gsap.set(imgs[0], { opacity: 1 });
 
-  let i = 0;
-  const cyc = setInterval(() => {
-    i = (i + 1) % imgs.length;
-    imgs.forEach((im, j) => gsap.to(im, { opacity: j === i ? 1 : 0, duration: 0.12 }));
-  }, 150);
+  // track holds two image sets → a seamless -50% vertical loop
+  if (track) gsap.to(track, { yPercent: -50, duration: 9, ease: 'none', repeat: -1 });
 
-  if (stack) gsap.to(stack, { yPercent: -42, ease: 'none', scrollTrigger: { trigger: pre, start: 'top top', end: 'bottom top', scrub: true } });
-  gsap.to(pre, { autoAlpha: 0.12, ease: 'none', scrollTrigger: { trigger: pre, start: 'center top', end: 'bottom top', scrub: true } });
-  ScrollTrigger.create({
-    trigger: pre, start: 'top top', end: 'bottom top', scrub: true,
-    onUpdate: (self) => { if (countEl) countEl.textContent = String(Math.round(self.progress * 99)).padStart(2, '0'); },
-    onLeave: () => clearInterval(cyc),
-  });
+  const o = { v: 0 };
+  gsap.to(o, { v: 100, duration: 1.9, ease: 'power1.inOut', onUpdate: () => {
+    if (bar) bar.style.width = o.v + '%';
+    if (countEl) countEl.textContent = String(Math.round(o.v)).padStart(2, '0');
+  } });
+  gsap.to(pre, { yPercent: -100, duration: 0.95, ease: 'power4.inOut', delay: 2.1,
+    onComplete: () => { pre.style.display = 'none'; ScrollTrigger.refresh(); } });
 }
 
 /* ----------------------------------------- hero scroll wipe (box → screen) */
