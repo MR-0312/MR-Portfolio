@@ -75,6 +75,12 @@ function inView(el) { return el.getBoundingClientRect().top < window.innerHeight
 function playPreloader() {
   const pre = document.querySelector('[data-pre]');
   if (!pre) return;
+  // Intro plays only once per visitor. On repeat visits, remove it from flow
+  // so the page opens straight on the hero (no scroll-past intro again).
+  let introSeen = false;
+  try { introSeen = localStorage.getItem('mr_intro_seen') === '1'; } catch (e) {}
+  if (introSeen) { pre.remove(); return; }
+  try { localStorage.setItem('mr_intro_seen', '1'); } catch (e) {}
   const imgs = Array.from(pre.querySelectorAll('.pre-stack img'));
   const stack = pre.querySelector('[data-pre-stack]');
   const countEl = pre.querySelector('[data-pre-count]');

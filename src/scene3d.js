@@ -7,9 +7,9 @@ import {
 } from 'three';
 
 // Monochrome palette to match the black & white cappen aesthetic.
-const WHITE = 0xf1f0ec;
-const SILVER = 0xbfbeb8;
-const SPARK  = 0xff3a12;   // the one red-orange micro-accent
+const WHITE = 0xfafafa;
+const SILVER = 0xc0c0c4;
+const SPARK  = 0xffffff;   // bright spark — pure monochrome (no chromatic accent)
 
 // An abstract "voice orb": a faceted metal core that pulses like a waveform,
 // wrapped in crossed wireframe rings inside a soft particle field. Returns the
@@ -39,7 +39,7 @@ function buildOrb(scale) {
   ringB.rotation.set(Math.PI * 0.32, Math.PI * 0.2, 0);
   orb.add(ringA, ringB);
 
-  // a single warm spark orbiting — the only color in the scene
+  // a single bright spark orbiting the core
   const spark = new Mesh(
     new IcosahedronGeometry(0.08, 1),
     new MeshStandardMaterial({ color: SPARK, emissive: SPARK, emissiveIntensity: 2.2, roughness: 0.3 }),
@@ -93,7 +93,7 @@ export function initScene3D(container, opts = {}) {
   scene.add(new HemisphereLight(0xffffff, 0x111111, 0.7));
   const key = new DirectionalLight(0xffffff, 2.0); key.position.set(3, 4, 5); scene.add(key);
   const rim = new PointLight(0xffffff, 3.5, 30); rim.position.set(-4, 1, 2); scene.add(rim);
-  const warm = new PointLight(SPARK, 1.4, 30); warm.position.set(4, -2, 3); scene.add(warm);
+  const fill = new PointLight(SPARK, 1.4, 30); fill.position.set(4, -2, 3); scene.add(fill);
 
   const world = new Group();
   scene.add(world);
