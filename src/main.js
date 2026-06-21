@@ -178,16 +178,62 @@ function splitLiquid(el) {
   return chars;
 }
 
+const SVGNS = 'http://www.w3.org/2000/svg';
+// Build a per-heading SVG turbulence+displacement filter for the liquid reveal.
+function makeLiquidFilter(id) {
+  let defs = document.getElementById('liquid-defs');
+  if (!defs) {
+    defs = document.createElementNS(SVGNS, 'svg');
+    defs.id = 'liquid-defs';
+    defs.setAttribute('aria-hidden', 'true');
+    defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    document.body.appendChild(defs);
+  }
+  const f = document.createElementNS(SVGNS, 'filter');
+  f.id = id;
+  f.setAttribute('x', '-30%'); f.setAttribute('y', '-30%');
+  f.setAttribute('width', '160%'); f.setAttribute('height', '160%');
+  f.setAttribute('color-interpolation-filters', 'sRGB');
+  const turb = document.createElementNS(SVGNS, 'feTurbulence');
+  turb.setAttribute('type', 'fractalNoise');
+  turb.setAttribute('baseFrequency', '0.02 0.022');
+  turb.setAttribute('numOctaves', '2');
+  turb.setAttribute('seed', String(Math.floor(Math.random() * 90) + 1));
+  turb.setAttribute('result', 'noise');
+  const disp = document.createElementNS(SVGNS, 'feDisplacementMap');
+  disp.setAttribute('in', 'SourceGraphic'); disp.setAttribute('in2', 'noise');
+  disp.setAttribute('scale', '0');
+  disp.setAttribute('xChannelSelector', 'R'); disp.setAttribute('yChannelSelector', 'G');
+  f.appendChild(turb); f.appendChild(disp);
+  defs.appendChild(f);
+  return { disp, turb };
+}
+
+// Liquid headline reveal: characters rise while an SVG displacement map melts
+// from heavy distortion to crisp, then the filter is removed for sharp text.
 function setupLiquid() {
-  document.querySelectorAll('[data-liquid]').forEach((el) => {
+  document.querySelectorAll('[data-liquid]').forEach((el, i) => {
     const chars = splitLiquid(el);
     el.style.opacity = '1';
-    const base = { yPercent: 0, opacity: 1, duration: 0.9, ease: 'power4.out', stagger: { each: 0.022, from: 'start' } };
-    if (inView(el)) {
-      gsap.fromTo(chars, { yPercent: 118, opacity: 0 }, { ...base, delay: PRE_DUR + 0.05 });
-    } else {
-      gsap.fromTo(chars, { yPercent: 118, opacity: 0 }, { ...base, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
-    }
+    const id = 'liq' + i;
+    const { disp, turb } = makeLiquidFilter(id);
+    el.style.filter = `url(#${id})`;
+    el.style.webkitFilter = `url(#${id})`;
+    const run = (delay) => {
+      gsap.fromTo(chars, { yPercent: 118, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1.0, ease: 'power4.out', stagger: { each: 0.02 }, delay });
+      const a = { s: 44, f: 0.018 };
+      gsap.to(a, {
+        s: 0, f: 0.009, duration: 1.15, ease: 'power3.out', delay,
+        onUpdate: () => {
+          disp.setAttribute('scale', a.s.toFixed(2));
+          turb.setAttribute('baseFrequency', a.f.toFixed(4) + ' ' + (a.f * 1.15).toFixed(4));
+        },
+        onComplete: () => { el.style.filter = 'none'; el.style.webkitFilter = 'none'; },
+      });
+    };
+    if (inView(el)) run(PRE_DUR + 0.05);
+    else ScrollTrigger.create({ trigger: el, start: 'top 86%', once: true, onEnter: () => run(0) });
   });
 }
 
