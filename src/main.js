@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initScene3D } from './scene3d.js';
-import { initFluidTitle } from './fluidTitle.js';
+import { initNeuralField } from './neuralField.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,7 +38,7 @@ catch (err) {
 function boot() {
   startTyping();
   setupCursor();
-  initFluidTitle();
+  initNeuralField();
 
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
   lenis.on('scroll', ScrollTrigger.update);
