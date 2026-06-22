@@ -125,9 +125,9 @@ export function initFluidTitle() {
       vec2 vel=texture(uVelocity, vUv).xy; vel-=vec2(R-L,T-B); frag=vec4(vel,0.,1.); }`));
     const display = prog(F(`uniform sampler2D uText; uniform sampler2D uVelocity; uniform sampler2D uDye;
       uniform vec3 paper; uniform vec3 ink; uniform float disp;
-      void main(){ vec2 vel = texture(uVelocity, vUv).xy; vec2 d = vel * disp;
+      void main(){ vec2 vel = texture(uVelocity, vUv).xy; vec2 d = clamp(vel * disp, -0.06, 0.06);
       float tA = texture(uText, vUv + d).a; float dye = texture(uDye, vUv).x;
-      float k = clamp(tA + dye, 0.0, 1.0); frag = vec4(mix(paper, ink, k), 1.0); }`));
+      float k = clamp(tA + smoothstep(0.0, 0.7, dye), 0.0, 1.0); frag = vec4(mix(paper, ink, k), 1.0); }`));
 
     /* ---------- text texture ---------- */
     const textTex = gl.createTexture();
@@ -158,12 +158,12 @@ export function initFluidTitle() {
     };
 
     /* ---------- buffers ---------- */
-    const SIM = 128;
+    const SIM = 128, DYE = 512;   // velocity is coarse; dye gets its own higher res for crisp smoke
     const filt = linFloat ? gl.LINEAR : gl.NEAREST;
     let velocity, dye, divFBO, curlFBO, pressureA;
     const initBuffers = () => {
       velocity = makeDouble(SIM, SIM, gl.RG16F, gl.RG, filt);
-      dye = makeDouble(SIM, SIM, gl.R16F, gl.RED, filt);
+      dye = makeDouble(DYE, DYE, gl.R16F, gl.RED, filt);
       divFBO = makeFBO(SIM, SIM, gl.R16F, gl.RED, gl.NEAREST);
       curlFBO = makeFBO(SIM, SIM, gl.R16F, gl.RED, gl.NEAREST);
       pressureA = makeDouble(SIM, SIM, gl.R16F, gl.RED, gl.NEAREST);
@@ -211,16 +211,16 @@ export function initFluidTitle() {
       gl.uniform1i(splat.u.uTarget, velocity.read.attach(0));
       gl.uniform1f(splat.u.aspect, aspect);
       gl.uniform2f(splat.u.point, x, y);
-      gl.uniform1f(splat.u.radius, 0.0006);
-      gl.uniform3f(splat.u.color, dx * 140.0, dy * 140.0, 0.0);
+      gl.uniform1f(splat.u.radius, 0.0022);
+      gl.uniform3f(splat.u.color, dx * 700.0, dy * 700.0, 0.0);
       blit(velocity.write); velocity.swap();
       gl.uniform1i(splat.u.uTarget, dye.read.attach(0));
-      gl.uniform3f(splat.u.color, 1.0, 1.0, 1.0);
+      gl.uniform3f(splat.u.color, 0.9, 0.9, 0.9);
       blit(dye.write); dye.swap();
     };
 
     /* ---------- sim step ---------- */
-    const VEL_DISS = 1.6, DYE_DISS = 1.7, PRESSURE_ITERS = 18, CURL = 9.0;
+    const VEL_DISS = 0.6, DYE_DISS = 1.3, PRESSURE_ITERS = 20, CURL = 30.0;
     const step = (dt) => {
       gl.disable(gl.BLEND);
       // curl + vorticity
@@ -278,7 +278,7 @@ export function initFluidTitle() {
       gl.uniform1i(display.u.uDye, dye.read.attach(2));
       gl.uniform3f(display.u.paper, PAPER[0], PAPER[1], PAPER[2]);
       gl.uniform3f(display.u.ink, INK[0], INK[1], INK[2]);
-      gl.uniform1f(display.u.disp, 0.0012);
+      gl.uniform1f(display.u.disp, 0.0006);
       blit(null);
       raf = requestAnimationFrame(loop);
     };
