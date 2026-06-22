@@ -13,11 +13,11 @@ const EASE = 'power3.out';
 const PRE_DUR = 0.25; // small delay before above-the-fold content animates in
 
 const PHRASES = [
-  'real-time voice AI',
-  'LLM agent orchestration',
-  'telephony & SIP',
-  'sub-3s voice RAG',
   'LLM fine-tuning',
+  'agentic RAG',
+  'computer vision',
+  'real-time voice AI',
+  'ML pipelines',
 ];
 
 root.classList.add('js');
@@ -39,7 +39,6 @@ function boot() {
   startTyping();
   setupCursor();
   initFluidCursor();
-  playPreloader();
 
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
   lenis.on('scroll', ScrollTrigger.update);
@@ -51,18 +50,28 @@ function boot() {
 
   setupMagnetic();
   setupActiveNav();
+  setupMobileNav();
   setupCollage();
   setupIndexRows();
 
-  const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
-  Promise.race([fontsReady, wait(600)]).then(() => {
+  // Section/hero entrances fire once the intro curtain is dismissed, so the hero
+  // assembles as the curtain lifts instead of playing hidden behind it.
+  let revealed = false;
+  const reveal = () => {
+    if (revealed) return; revealed = true;
     setupLiquid();        // splits headings (preserves embedded 3D box)
     setupSplitHeadings();
     setupReveals();
     setupCounts();
     init3D();             // after liquid split so embedded canvases survive
     ScrollTrigger.refresh();
-  });
+  };
+  const startContent = () => {
+    const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+    Promise.race([fontsReady, wait(600)]).then(reveal);
+  };
+
+  playPreloader(lenis, startContent);
   window.addEventListener('load', () => ScrollTrigger.refresh());
 }
 
@@ -70,23 +79,20 @@ function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 function inView(el) { return el.getBoundingClientRect().top < window.innerHeight * 0.92; }
 
 /* --------------------------------------------------------------- intro */
-// Scroll-driven intro (cappen-style): an in-flow first screen. The thumbnail
-// strip auto-cycles, and as you scroll the intro away the strip parallaxes,
-// the counter fills, and it dissolves to reveal the hero below. No fixed
-// curtain / scroll-lock, so it can never trap the page.
-function playPreloader() {
+// A fixed intro curtain, shown on EVERY visit/reload. The thumbnail strip
+// cycles and a counter ticks 00→99; the first scroll (or tap / key) slides the
+// curtain away and removes it — so it can't be reached by scrolling back up,
+// only a fresh load brings it back. Scroll is held until dismissal, with a
+// safety auto-dismiss, and without JS the curtain stays in-flow (never traps).
+function playPreloader(lenis, onDone) {
   const pre = document.querySelector('[data-pre]');
-  if (!pre) return;
-  // Intro plays once per session. Within a visit (reloads / coming back to the
-  // tab) it's skipped so it isn't repetitive; a fresh session/tab shows it again.
-  let introSeen = false;
-  try { introSeen = sessionStorage.getItem('mr_intro_seen') === '1'; } catch (e) {}
-  if (introSeen) { pre.remove(); return; }
-  try { sessionStorage.setItem('mr_intro_seen', '1'); } catch (e) {}
+  if (!pre) { if (onDone) onDone(); return; }
   const imgs = Array.from(pre.querySelectorAll('.pre-stack img'));
   const stack = pre.querySelector('[data-pre-stack]');
   const countEl = pre.querySelector('[data-pre-count]');
   if (imgs.length) gsap.set(imgs[0], { opacity: 1 });
+
+  if (lenis) lenis.stop(); // hold the page still under the curtain
 
   let i = 0;
   const cyc = setInterval(() => {
@@ -94,13 +100,42 @@ function playPreloader() {
     imgs.forEach((im, j) => gsap.to(im, { opacity: j === i ? 1 : 0, duration: 0.12 }));
   }, 150);
 
-  if (stack) gsap.to(stack, { yPercent: -42, ease: 'none', scrollTrigger: { trigger: pre, start: 'top top', end: 'bottom top', scrub: true } });
-  gsap.to(pre, { autoAlpha: 0.12, ease: 'none', scrollTrigger: { trigger: pre, start: 'center top', end: 'bottom top', scrub: true } });
-  ScrollTrigger.create({
-    trigger: pre, start: 'top top', end: 'bottom top', scrub: true,
-    onUpdate: (self) => { if (countEl) countEl.textContent = String(Math.round(self.progress * 99)).padStart(2, '0'); },
-    onLeave: () => clearInterval(cyc),
+  const c = { v: 0 };
+  const counter = gsap.to(c, {
+    v: 99, duration: 1.7, ease: 'power2.inOut',
+    onUpdate: () => { if (countEl) countEl.textContent = String(Math.round(c.v)).padStart(2, '0'); },
   });
+
+  const fade = [stack, countEl, ...pre.querySelectorAll('.pre-edge'), ...pre.querySelectorAll('.pre-tag')].filter(Boolean);
+  let dismissed = false;
+
+  function dismiss() {
+    if (dismissed) return; dismissed = true;
+    clearTimeout(armId); clearTimeout(safety);
+    window.removeEventListener('wheel', arm); window.removeEventListener('touchmove', arm);
+    window.removeEventListener('keydown', arm); pre.removeEventListener('click', arm);
+    counter.progress(1); // snap the count to 99
+    if (onDone) onDone(); // hero assembles as the curtain lifts
+    gsap.timeline({ onComplete: () => {
+      clearInterval(cyc);
+      pre.remove();
+      if (lenis) { lenis.start(); lenis.scrollTo(0, { immediate: true }); }
+      ScrollTrigger.refresh();
+    } })
+      .to(fade, { opacity: 0, duration: 0.3, ease: 'power2.in' }, 0)
+      .to(pre, { yPercent: -100, duration: 0.9, ease: 'power4.inOut' }, 0.12);
+  }
+  function arm() { dismiss(); }
+
+  // let the intro breathe, then any scroll / tap / key dismisses it
+  const armId = setTimeout(() => {
+    window.addEventListener('wheel', arm, { passive: true });
+    window.addEventListener('touchmove', arm, { passive: true });
+    window.addEventListener('keydown', arm);
+    pre.addEventListener('click', arm);
+  }, 800);
+
+  const safety = setTimeout(dismiss, 6000); // never trap the page
 }
 
 /* --------------------------------------------------------------- cursor */
@@ -138,13 +173,29 @@ function splitLiquid(el) {
   const nodes = Array.from(el.childNodes);
   el.textContent = '';
   const chars = [];
+  // Wrap each word's characters in a nowrap .liq-word so headings break only
+  // at spaces (never mid-word, e.g. "HUMAN-CENT/ERED" on narrow screens).
+  const addWord = (word) => {
+    const w = document.createElement('span'); w.className = 'liq-word';
+    for (const ch of word) {
+      const s = document.createElement('span'); s.className = 'liq-char'; s.textContent = ch;
+      w.appendChild(s); chars.push(s);
+    }
+    el.appendChild(w);
+  };
   nodes.forEach((node) => {
     if (node.nodeType === Node.TEXT_NODE) {
-      for (const ch of node.textContent) {
-        if (ch === ' ') { el.appendChild(document.createTextNode(' ')); continue; }
-        const s = document.createElement('span'); s.className = 'liq-char'; s.textContent = ch;
-        el.appendChild(s); chars.push(s);
-      }
+      node.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(' ')); return; }
+        // split at hyphens (keeping the hyphen) so compounds like REAL-TIME and
+        // HUMAN-CENTERED can wrap at the hyphen on narrow screens (never mid-word)
+        const segs = part.split('-');
+        segs.forEach((seg, idx) => {
+          const word = idx < segs.length - 1 ? seg + '-' : seg;
+          if (word) addWord(word);
+        });
+      });
     } else if (node.nodeName === 'BR') {
       el.appendChild(node);
     } else {
@@ -294,4 +345,21 @@ function setupActiveNav() {
     if (!sec) return;
     ScrollTrigger.create({ trigger: sec, start: 'top center', end: 'bottom center', onToggle: (s) => a.classList.toggle('is-active', s.isActive) });
   });
+}
+
+/* ----------------------------------------------------------- mobile nav */
+function setupMobileNav() {
+  const openBtn = document.querySelector('[data-nav-open]');
+  const closeBtn = document.querySelector('[data-nav-close]');
+  const menu = document.querySelector('[data-nav-menu]');
+  if (!openBtn || !menu) return;
+  const set = (open) => {
+    menu.classList.toggle('is-open', open);
+    openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+  };
+  openBtn.addEventListener('click', () => set(true));
+  if (closeBtn) closeBtn.addEventListener('click', () => set(false));
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
 }
