@@ -131,11 +131,11 @@ export function initFluidTitle() {
       float dR = texture(uDye, vUv + vec2(dTexel.x, 0.0)).x;
       float dT = texture(uDye, vUv + vec2(0.0, dTexel.y)).x;
       float dB = texture(uDye, vUv - vec2(0.0, dTexel.y)).x;
-      float dye = smoothstep(0.05, 0.32, dC);                 // crisp liquid edges, not wispy smoke
+      float dye = smoothstep(0.03, 0.12, dC);                 // opaque solid ink (not translucent smoke/gas)
       vec3 nrm = normalize(vec3(dL - dR, dB - dT, 0.55));      // surface normal from the dye field
-      float spec = pow(clamp(dot(nrm, normalize(vec3(-0.5, 0.6, 0.85))), 0.0, 1.0), 9.0);
+      float spec = pow(clamp(dot(nrm, normalize(vec3(-0.5, 0.6, 0.85))), 0.0, 1.0), 10.0);
       float k = clamp(tA + dye, 0.0, 1.0);
-      vec3 col = mix(paper, ink, k) + spec * dye * 0.6;        // glossy sheen → liquid surface
+      vec3 col = mix(paper, ink, k) + spec * dye * 0.22;       // subtle edge sheen only
       frag = vec4(col, 1.0); }`));
 
     /* ---------- text texture ---------- */
@@ -203,15 +203,13 @@ export function initFluidTitle() {
     title.style.visibility = 'hidden';
 
     /* ---------- pointer ---------- */
-    const ptr = { x: 0, y: 0, dx: 0, dy: 0, down: false, inside: false };
+    const ptr = { x: 0.5, y: 0.5, lx: 0.5, ly: 0.5, inside: false, init: false };
     window.addEventListener('pointermove', (e) => {
-      const inside = e.clientX >= rect.left && e.clientX <= rect.left + rect.width
-                  && e.clientY >= rect.top && e.clientY <= rect.top + rect.height;
-      const nx = (e.clientX - rect.left) / rect.width;
-      const ny = 1 - (e.clientY - rect.top) / rect.height;
-      ptr.dx = (nx - ptr.x); ptr.dy = (ny - ptr.y);
-      ptr.x = nx; ptr.y = ny; ptr.inside = inside;
-      if (inside) ptr.down = true;
+      ptr.inside = e.clientX >= rect.left && e.clientX <= rect.left + rect.width
+                && e.clientY >= rect.top && e.clientY <= rect.top + rect.height;
+      ptr.x = (e.clientX - rect.left) / rect.width;
+      ptr.y = 1 - (e.clientY - rect.top) / rect.height;
+      if (!ptr.init) { ptr.lx = ptr.x; ptr.ly = ptr.y; ptr.init = true; }
     }, { passive: true });
 
     const doSplat = (x, y, dx, dy) => {
@@ -220,8 +218,8 @@ export function initFluidTitle() {
       gl.uniform1i(splat.u.uTarget, velocity.read.attach(0));
       gl.uniform1f(splat.u.aspect, aspect);
       gl.uniform2f(splat.u.point, x, y);
-      gl.uniform1f(splat.u.radius, 0.0010);
-      gl.uniform3f(splat.u.color, dx * 700.0, dy * 700.0, 0.0);
+      gl.uniform1f(splat.u.radius, 0.0016);
+      gl.uniform3f(splat.u.color, dx * 350.0, dy * 350.0, 0.0);
       blit(velocity.write); velocity.swap();
       gl.uniform1i(splat.u.uTarget, dye.read.attach(0));
       gl.uniform3f(splat.u.color, 1.0, 1.0, 1.0);
@@ -229,7 +227,7 @@ export function initFluidTitle() {
     };
 
     /* ---------- sim step ---------- */
-    const VEL_DISS = 0.35, DYE_DISS = 0.7, PRESSURE_ITERS = 20, CURL = 30.0;
+    const VEL_DISS = 0.9, DYE_DISS = 0.85, PRESSURE_ITERS = 20, CURL = 8.0;
     const step = (dt) => {
       gl.disable(gl.BLEND);
       // curl + vorticity
@@ -278,7 +276,16 @@ export function initFluidTitle() {
     let raf = 0, last = performance.now();
     const loop = (now) => {
       const dt = Math.min(0.016, (now - last) / 1000) || 0.016; last = now;
-      if (ptr.down && (Math.abs(ptr.dx) > 0 || Math.abs(ptr.dy) > 0)) { doSplat(ptr.x, ptr.y, ptr.dx, ptr.dy); ptr.dx = 0; ptr.dy = 0; }
+      // inject dye continuously along the cursor path → one smooth unbroken trail
+      if (ptr.inside) {
+        const mx = ptr.x - ptr.lx, my = ptr.y - ptr.ly;
+        const dist = Math.hypot(mx, my);
+        if (dist > 0.0001) {
+          const steps = Math.min(12, Math.ceil(dist / 0.006));
+          for (let s = 1; s <= steps; s++) { const t = s / steps; doSplat(ptr.lx + mx * t, ptr.ly + my * t, mx, my); }
+        }
+      }
+      ptr.lx = ptr.x; ptr.ly = ptr.y;
       step(dt);
       // final: distorted text + dye, straight to screen
       gl.useProgram(display.p);
