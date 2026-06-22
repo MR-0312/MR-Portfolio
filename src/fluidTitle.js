@@ -123,10 +123,10 @@ export function initFluidTitle() {
       void main(){ float L=texture(uPressure, vUv-vec2(texel.x,0.)).x; float R=texture(uPressure, vUv+vec2(texel.x,0.)).x;
       float T=texture(uPressure, vUv+vec2(0.,texel.y)).x; float B=texture(uPressure, vUv-vec2(0.,texel.y)).x;
       vec2 vel=texture(uVelocity, vUv).xy; vel-=vec2(R-L,T-B); frag=vec4(vel,0.,1.); }`));
-    const display = prog(F(`uniform sampler2D uText; uniform sampler2D uVelocity; uniform sampler2D uDye;
-      uniform vec3 paper; uniform vec3 ink; uniform float disp;
-      void main(){ vec2 vel = texture(uVelocity, vUv).xy; vec2 d = clamp(vel * disp, -0.06, 0.06);
-      float tA = texture(uText, vUv + d).a; float dye = texture(uDye, vUv).x;
+    const display = prog(F(`uniform sampler2D uText; uniform sampler2D uDye;
+      uniform vec3 paper; uniform vec3 ink;
+      void main(){ float tA = texture(uText, vUv).a;          // text is STILL — no displacement
+      float dye = texture(uDye, vUv).x;                        // only the fluid ink moves
       float k = clamp(tA + smoothstep(0.0, 0.7, dye), 0.0, 1.0); frag = vec4(mix(paper, ink, k), 1.0); }`));
 
     /* ---------- text texture ---------- */
@@ -274,11 +274,9 @@ export function initFluidTitle() {
       // final: distorted text + dye, straight to screen
       gl.useProgram(display.p);
       gl.uniform1i(display.u.uText, (gl.activeTexture(gl.TEXTURE0), gl.bindTexture(gl.TEXTURE_2D, textTex), 0));
-      gl.uniform1i(display.u.uVelocity, velocity.read.attach(1));
       gl.uniform1i(display.u.uDye, dye.read.attach(2));
       gl.uniform3f(display.u.paper, PAPER[0], PAPER[1], PAPER[2]);
       gl.uniform3f(display.u.ink, INK[0], INK[1], INK[2]);
-      gl.uniform1f(display.u.disp, 0.0006);
       blit(null);
       raf = requestAnimationFrame(loop);
     };
